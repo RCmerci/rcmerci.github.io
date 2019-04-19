@@ -54,16 +54,7 @@
   done
 #+END_SRC
 
-- 使用 =orgalorg= 来查询所有节点的情况
-#+BEGIN_SRC 
-HOST_PREFIX=terminus-y-private
-cat /etc/hosts | grep -E $HOST_PREFIX | awk '{print $1}' | orgalorg -s -x -i cpu_stat.sh -C bash
-#+END_SRC
 
-
-*** 系统进程 CPU 配额
-目前暂定    
-[[Q.org]]
 
 
 
