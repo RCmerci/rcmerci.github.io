@@ -1,0 +1,9 @@
+
+*  golang escape analysis
+  
+
+
+
+
+** references
+   - 
