@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-04-26 Fri 22:42 -->
+<!-- 2019-04-26 Fri 22:45 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>How to read the syntax tree of golang</title>
@@ -232,7 +232,7 @@ for the JavaScript code in this tag.
 <body>
 <div id="preamble" class="status">
 <p class="author">Author: rcmerci</p>
-<p class="date">Updated: 2019-04-26 Fri 22:42</p>
+<p class="date">Updated: 2019-04-26 Fri 22:45</p>
 </div>
 <div id="content">
 <h1 class="title">How to read the syntax tree of golang</h1>
@@ -251,14 +251,14 @@ the syntax tree output by the golang compiler.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org1881887">1. Get syntax tree</a></li>
-<li><a href="#orgc36a494">2. The general impression of the syntax tree</a></li>
+<li><a href="#org34f127f">1. Get syntax tree</a></li>
+<li><a href="#org057fb50">2. The general impression of the syntax tree</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org1881887" class="outline-2">
-<h2 id="org1881887"><span class="section-number-2">1</span> Get syntax tree</h2>
+<div id="outline-container-org34f127f" class="outline-2">
+<h2 id="org34f127f"><span class="section-number-2">1</span> Get syntax tree</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 We can get the syntax tree as follows:
@@ -350,8 +350,8 @@ after walk f1
 </div>
 </div>
 
-<div id="outline-container-orgc36a494" class="outline-2">
-<h2 id="orgc36a494"><span class="section-number-2">2</span> The general impression of the syntax tree</h2>
+<div id="outline-container-org057fb50" class="outline-2">
+<h2 id="org057fb50"><span class="section-number-2">2</span> The general impression of the syntax tree</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 Take a closer look at this piece of output text:
@@ -368,11 +368,11 @@ after walk f2
 
 <ul class="org-ul">
 <li><code>l(8)</code>  : Line 8</li>
-<li><code>tc(1)</code> : tc means 'typecheck', Here <code>1</code> indicates the level of
+<li><code>tc(1)</code>  : tc means 'typecheck', Here <code>1</code> indicates the level of
 typecheck, I will write an article later to introduce the typecheck
 of golang.</li>
-<li><code>NAME-main.f1</code> : <code>main</code> is package name</li>
-<li><code>a(bool)</code> : if addressable or not</li>
+<li><code>NAME-main.f1</code> : <code>main</code> is package name, <code>f1</code> is function name</li>
+<li><code>a(bool)</code>  : addressable or not</li>
 <li><code>x(0)</code>  : offset, but have different meanings, source comment says:</li>
 </ul>
 <blockquote>
@@ -390,13 +390,13 @@ Possibly still more uses. If you find any, document them.
 </p>
 </blockquote>
 <ul class="org-ul">
-<li><code>class(PFUNC)</code>: this node is global function</li>
-<li><code>used</code>: flag for variable declared and not used error</li>
-<li><code>FUNC-func(int)</code>: type of this node</li>
-<li><code>AS</code>: assignment node</li>
-<li><code>CALLFUNC-list</code>: The parameter part of CALLFUNC, '-list' means <code>List</code> attribute of <code>Node</code>, instead of a literal 'list'</li>
-<li><code>INDREGSP-SP</code>: offset plus indirect of REGSP</li>
-<li><code>addrtaken</code>: address taken, even if not moved to heap</li>
+<li><code>class(PFUNC)</code> : this node is global function</li>
+<li><code>used</code>  : flag for variable declared and not used error</li>
+<li><code>FUNC-func(int)</code> : type of this node</li>
+<li><code>AS</code>   : assignment node</li>
+<li><code>CALLFUNC-list</code> : The parameter part of CALLFUNC, '-list' means <code>List</code> attribute of <code>Node</code>, instead of a literal 'list'</li>
+<li><code>INDREGSP-SP</code>  : offset plus indirect of REGSP</li>
+<li><code>addrtaken</code>  : address taken, even if not moved to heap</li>
 </ul>
 </div>
 </div>

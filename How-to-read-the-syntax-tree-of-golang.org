@@ -101,11 +101,11 @@ after walk f2
 #+END_SRC
 
 - =l(8)=		: Line 8 
-- =tc(1)= : tc means 'typecheck', Here =1= indicates the level of
+- =tc(1)=		: tc means 'typecheck', Here =1= indicates the level of
   typecheck, I will write an article later to introduce the typecheck
   of golang.
-- =NAME-main.f1=	: =main= is package name
-- =a(bool)=	: if addressable or not
+- =NAME-main.f1=	: =main= is package name, =f1= is function name
+- =a(bool)=		: addressable or not
 - =x(0)=		: offset, but have different meanings, source comment says:
 #+BEGIN_QUOTE
 Various. Usually an offset into a struct. For example:
@@ -115,10 +115,10 @@ Various. Usually an offset into a struct. For example:
 - Named OLITERALs use it to to store their ambient iota value.
 Possibly still more uses. If you find any, document them.
 #+END_QUOTE
-- =class(PFUNC)=: this node is global function
-- =used=: flag for variable declared and not used error
-- =FUNC-func(int)=: type of this node
-- =AS=: assignment node
-- =CALLFUNC-list=: The parameter part of CALLFUNC, '-list' means =List= attribute of =Node=, instead of a literal 'list'
-- =INDREGSP-SP=: offset plus indirect of REGSP
-- =addrtaken=: address taken, even if not moved to heap
+- =class(PFUNC)=	: this node is global function
+- =used=		: flag for variable declared and not used error
+- =FUNC-func(int)=	: type of this node
+- =AS=			: assignment node
+- =CALLFUNC-list=	: The parameter part of CALLFUNC, '-list' means =List= attribute of =Node=, instead of a literal 'list'
+- =INDREGSP-SP=		: offset plus indirect of REGSP
+- =addrtaken=		: address taken, even if not moved to heap
