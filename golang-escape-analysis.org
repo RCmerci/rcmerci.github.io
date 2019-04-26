@@ -1,9 +1,37 @@
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:http://thomasf.github.io/solarized-css/org-info.min.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-light.min.css" />
 
 *  golang escape analysis
-  
+created: 2019-04-19  | updated: 2019-04-25
+** visitBottomUp
+   The entry in =escape analysis= is the =escapes= function.
 
+#+BEGIN_SRC go
+func escapes(all []*Node) {
+	visitBottomUp(all, escAnalyze)
+}
+func escAnalyze(all []*Node, recursive bool) {
+        //...
+}
+func visitBottomUp(list []*Node, analyze func(list []*Node, recursive bool)) {
+        // ...
+	for _, n := range list {
+		if n.Op == ODCLFUNC && !n.Func.IsHiddenClosure() {
+			v.visit(n)
+		}
+	}
+}
+#+END_SRC   
+On the whole, =[]*Node= can be seen as a list of trees, also as a graph, because
+some subtrees are connected to each other.
 
+As you can see from the name of =visitBottomUp=, it will traverse from bottom to
+top, and its argument =analyze='s first argument =list= is =[]*Node=, its
+content is a list of functions, each function will only call other functions in
+the list or functions that have been passed in previous invocations of =analyze=
 
+Said in the previous paragraph, the function in =list= will only call the
+functions in =list=.  这里面包括了2中情况，第一种是
 
-** references
-   - 
+In the graph theory, strongly connected components is a set
+of elements that are accessible to each other. 实际上

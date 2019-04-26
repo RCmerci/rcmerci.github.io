@@ -180,79 +180,7 @@
   .org-svg { width: 90%; }
   /*]]>*/-->
 </style>
-<link rel="stylesheet" type="text/css" href="http://thomasf.github.io/solarized-css/solarized-light.min.css" />
-
-<script type="text/javascript" src="http://thomasf.github.io/solarized-css/org-info.min.js">
-/**
- *
- * @source: http://thomasf.github.io/solarized-css/org-info.min.js
- *
- * @licstart  The following is the entire license notice for the
- *  JavaScript code in http://thomasf.github.io/solarized-css/org-info.min.js.
- *
- * Copyright (C) 2012-2018 Free Software Foundation, Inc.
- *
- *
- * The JavaScript code in this tag is free software: you can
- * redistribute it and/or modify it under the terms of the GNU
- * General Public License (GNU GPL) as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option)
- * any later version.  The code is distributed WITHOUT ANY WARRANTY;
- * without even the implied warranty of MERCHANTABILITY or FITNESS
- * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
- *
- * As additional permission under GNU GPL version 3 section 7, you
- * may distribute non-source (e.g., minimized or compacted) forms of
- * that code without the copy of the GNU GPL normally required by
- * section 4, provided you include this license notice and a URL
- * through which recipients can access the Corresponding Source.
- *
- * @licend  The above is the entire license notice
- * for the JavaScript code in http://thomasf.github.io/solarized-css/org-info.min.js.
- *
- */
-</script>
-
-<script type="text/javascript">
-
-/*
-@licstart  The following is the entire license notice for the
-JavaScript code in this tag.
-
-Copyright (C) 2012-2018 Free Software Foundation, Inc.
-
-The JavaScript code in this tag is free software: you can
-redistribute it and/or modify it under the terms of the GNU
-General Public License (GNU GPL) as published by the Free Software
-Foundation, either version 3 of the License, or (at your option)
-any later version.  The code is distributed WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY or FITNESS
-FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
-
-As additional permission under GNU GPL version 3 section 7, you
-may distribute non-source (e.g., minimized or compacted) forms of
-that code without the copy of the GNU GPL normally required by
-section 4, provided you include this license notice and a URL
-through which recipients can access the Corresponding Source.
-
-
-@licend  The above is the entire license notice
-for the JavaScript code in this tag.
-*/
-
-<!--/*--><![CDATA[/*><!--*/
-org_html_manager.set("TOC_DEPTH", "3");
-org_html_manager.set("LINK_HOME", "");
-org_html_manager.set("LINK_UP", "");
-org_html_manager.set("LOCAL_TOC", "1");
-org_html_manager.set("VIEW_BUTTONS", "0");
-org_html_manager.set("MOUSE_HINT", "underline");
-org_html_manager.set("FIXED_TOC", "0");
-org_html_manager.set("TOC", "1");
-org_html_manager.set("VIEW", "1");
-org_html_manager.setup();  // activate after the parameters are set
-/*]]>*///-->
-</script>
+<link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
 <script type="text/javascript">
 /*
 @licstart  The following is the entire license notice for the
@@ -306,67 +234,165 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orga24c996">1. golang escape analysis</a>
+<li><a href="#orgf758d46">1. How to read the syntax tree of golang</a>
 <ul>
-<li><a href="#org736441e">1.1. visitBottomUp</a></li>
+<li><a href="#orgd115f99">1.1. Get syntax tree</a></li>
+<li><a href="#orga93e260">1.2. The general impression of the syntax tree</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orga24c996" class="outline-2">
-<h2 id="orga24c996"><span class="section-number-2">1</span> golang escape analysis</h2>
+<div id="outline-container-orgf758d46" class="outline-2">
+<h2 id="orgf758d46"><span class="section-number-2">1</span> How to read the syntax tree of golang</h2>
 <div class="outline-text-2" id="text-1">
 <p>
-created: 2019-04-19  | updated: 2019-04-25
+I will explain in this article how to understand some of the fields in
+the syntax tree output by the golang compiler.
 </p>
 </div>
-<div id="outline-container-org736441e" class="outline-3">
-<h3 id="org736441e"><span class="section-number-3">1.1</span> visitBottomUp</h3>
+<div id="outline-container-orgd115f99" class="outline-3">
+<h3 id="orgd115f99"><span class="section-number-3">1.1</span> Get syntax tree</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
-The entry in <code>escape analysis</code> is the <code>escapes</code> function.
+We can get the syntax tree as follows:
 </p>
 
+<p>
+First, suppose there is <code>main.go</code>
+</p>
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">escapes</span>(all []*<span style="color: #0287c8; font-weight: bold;">Node</span>) {
-        <span style="color: #424242; font-weight: bold;">visitBottomUp</span>(all, escAnalyze)
+<pre class="src src-go"><span style="color: #989848;">package</span> main
+
+<span style="color: #989848;">import</span> (
+        <span style="color: #b85c57;">"fmt"</span>
+)
+
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">f2</span>(i <span style="color: #0287c8; font-weight: bold;">int</span>) {
+        <span style="color: #424242; font-weight: bold;">f1</span>(i)
 }
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">escAnalyze</span>(all []*<span style="color: #0287c8; font-weight: bold;">Node</span>, recursive <span style="color: #0287c8; font-weight: bold;">bool</span>) {
-        <span style="color: #40883f;">//</span><span style="color: #40883f;">...</span>
-}
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">visitBottomUp</span>(list []*<span style="color: #0287c8; font-weight: bold;">Node</span>, analyze <span style="color: #989848;">func</span>(list []*<span style="color: #0287c8; font-weight: bold;">Node</span>, recursive <span style="color: #0287c8; font-weight: bold;">bool</span>)) {
-        <span style="color: #40883f;">// </span><span style="color: #40883f;">...</span>
-        <span style="color: #989848;">for</span> _, n := <span style="color: #989848;">range</span> list {
-                <span style="color: #989848;">if</span> n.Op == ODCLFUNC &amp;&amp; !n.Func.<span style="color: #424242; font-weight: bold;">IsHiddenClosure</span>() {
-                        v.<span style="color: #424242; font-weight: bold;">visit</span>(n)
-                }
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">f1</span>(i <span style="color: #0287c8; font-weight: bold;">int</span>) {
+        <span style="color: #989848;">if</span> i &gt; 10 {
+                <span style="color: #989848;">return</span>
         }
+        <span style="color: #424242; font-weight: bold;">f2</span>(i + 1)
+}
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">main</span>() {
+        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, 1)
+        <span style="color: #424242; font-weight: bold;">f1</span>(1)
 }
 </pre>
 </div>
 <p>
-On the whole, <code>[]*Node</code> can be seen as a list of trees, also as a graph, because
-some subtrees are connected to each other.
+Then we can use the following command to print out the syntax tree:
 </p>
-
+<div class="org-src-container">
+<pre class="src src-bash">go tool compile -W main.go
+</pre>
+</div>
 <p>
-As you can see from the name of <code>visitBottomUp</code>, it will traverse from bottom to
-top, and its argument <code>analyze</code>'s first argument <code>list</code> is <code>[]*Node</code>, its
-content is a list of functions, each function will only call other functions in
-the list or functions that have been passed in previous invocations of <code>analyze</code>
+The following syntax tree is output:
 </p>
+<pre class="example">
+before f2
+.   CALLFUNC l(8) tc(1)
+.   .   NAME-main.f1 a(true) l(10) x(0) class(PFUNC) tc(1) used FUNC-func(int)
+.   CALLFUNC-list
+.   .   NAME-main.i a(true) g(1) l(7) x(0) class(PPARAM) f(1) tc(1) used int
+after walk f2
+.   CALLFUNC l(8) tc(1) hascall
+.   .   NAME-main.f1 a(true) l(10) x(0) class(PFUNC) tc(1) used FUNC-func(int)
+.   CALLFUNC-list
+.   .   AS l(8) tc(1)
+.   .   .   INDREGSP-SP a(true) l(8) x(0) tc(1) addrtaken main.__ int
+.   .   .   NAME-main.i a(true) g(1) l(7) x(0) class(PPARAM) f(1) tc(1) used int
 
-<p>
-Said in the previous paragraph, the function in <code>list</code> will only call the
-functions in <code>list</code>.  这里面包括了2中情况，第一种是
-</p>
+before f1
+.   IF l(11) tc(1)
+.   .   GT l(11) tc(1) bool
+.   .   .   NAME-main.i a(true) g(1) l(10) x(0) class(PPARAM) f(1) tc(1) used int
+.   .   .   LITERAL-10 l(11) tc(1) int
+.   IF-body
+.   .   RETURN l(12) tc(1)
 
+.   CALLFUNC l(14) tc(1)
+.   .   NAME-main.f2 a(true) l(7) x(0) class(PFUNC) tc(1) used FUNC-func(int)
+.   CALLFUNC-list
+.   .   ADD l(14) tc(1) int
+.   .   .   NAME-main.i a(true) g(1) l(10) x(0) class(PPARAM) f(1) tc(1) used int
+.   .   .   LITERAL-1 l(14) tc(1) int
+after walk f1
+.   IF l(11) tc(1)
+.   .   GT l(11) tc(1) bool
+.   .   .   NAME-main.i a(true) g(1) l(10) x(0) class(PPARAM) f(1) tc(1) used int
+.   .   .   LITERAL-10 l(11) tc(1) int
+.   IF-body
+.   .   RETURN l(12) tc(1)
+
+.   CALLFUNC l(14) tc(1) hascall
+.   .   NAME-main.f2 a(true) l(7) x(0) class(PFUNC) tc(1) used FUNC-func(int)
+.   CALLFUNC-list
+.   .   AS l(14) tc(1)
+.   .   .   INDREGSP-SP a(true) l(14) x(0) tc(1) addrtaken main.__ int
+.   .   .   ADD l(14) tc(1) int
+.   .   .   .   NAME-main.i a(true) g(1) l(10) x(0) class(PPARAM) f(1) tc(1) used int
+.   .   .   .   LITERAL-1 l(14) tc(1) int
+
+
+...// truncated
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orga93e260" class="outline-3">
+<h3 id="orga93e260"><span class="section-number-3">1.2</span> The general impression of the syntax tree</h3>
+<div class="outline-text-3" id="text-1-2">
 <p>
-In the graph theory, strongly connected components is a set
-of elements that are accessible to each other. 实际上
+Take a closer look at this piece of output text:
 </p>
+<pre class="example">
+after walk f2
+.   CALLFUNC l(8) tc(1) hascall
+.   .   NAME-main.f1 a(true) l(10) x(0) class(PFUNC) tc(1) used FUNC-func(int)
+.   CALLFUNC-list
+.   .   AS l(8) tc(1)
+.   .   .   INDREGSP-SP a(true) l(8) x(0) tc(1) addrtaken main.__ int
+.   .   .   NAME-main.i a(true) g(1) l(7) x(0) class(PPARAM) f(1) tc(1) used int
+</pre>
+
+<ul class="org-ul">
+<li><code>l(8)</code>  : Line 8</li>
+<li><code>tc(1)</code> : tc means 'typecheck', Here <code>1</code> indicates the level of
+typecheck, I will write an article later to introduce the typecheck
+of golang.</li>
+<li><code>NAME-main.f1</code> : <code>main</code> is package name</li>
+<li><code>a(bool)</code> : if addressable or not</li>
+<li><code>x(0)</code>  : offset, but have different meanings, source comment says:</li>
+</ul>
+<blockquote>
+<p>
+Various. Usually an offset into a struct. For example:
+</p>
+<ul class="org-ul">
+<li>ONAME nodes that refer to local variables use it to identify their stack frame position.</li>
+<li>ODOT, ODOTPTR, and OINDREGSP use it to indicate offset relative to their base address.</li>
+<li>OSTRUCTKEY uses it to store the named field's offset.</li>
+<li>Named OLITERALs use it to to store their ambient iota value.</li>
+</ul>
+<p>
+Possibly still more uses. If you find any, document them.
+</p>
+</blockquote>
+<ul class="org-ul">
+<li><code>class(PFUNC)</code>: this node is global function</li>
+<li><code>used</code>: flag for variable declared and not used error</li>
+<li><code>FUNC-func(int)</code>: type of this node</li>
+<li><code>AS</code>: assignment node</li>
+<li><code>CALLFUNC-list</code>: The parameter part of CALLFUNC, '-list' means <code>List</code> attribute of <code>Node</code>, instead of a literal 'list'</li>
+<li><code>INDREGSP-SP</code>: offset plus indirect of REGSP</li>
+<li><code>addrtaken</code>: address taken, even if not moved to heap</li>
+</ul>
 </div>
 </div>
 </div>
