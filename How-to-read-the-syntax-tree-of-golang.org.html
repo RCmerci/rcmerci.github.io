@@ -3,12 +3,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-04-26 Fri 22:17 -->
+<!-- 2019-04-26 Fri 22:36 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>&lrm;</title>
+<title>How to read the syntax tree of golang</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="rcmerci" />
+<meta name="keywords" content="golang" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
   .title  { text-align: center;
@@ -231,34 +232,34 @@ for the JavaScript code in this tag.
 <body>
 <div id="preamble" class="status">
 <p class="author">Author: rcmerci</p>
-<p class="date">Updated: 2019-04-26 Fri 22:17</p>
+<p class="date">Updated: 2019-04-26 Fri 22:36</p>
 </div>
 <div id="content">
-<div id="table-of-contents">
-<h2>Table of Contents</h2>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#org120b543">1. How to read the syntax tree of golang</a>
-<ul>
-<li><a href="#org131a9fc">1.1. Get syntax tree</a></li>
-<li><a href="#org92eb133">1.2. The general impression of the syntax tree</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
+<h1 class="title">How to read the syntax tree of golang</h1>
+<div class="abstract">
+<p>
 
-<div id="outline-container-org120b543" class="outline-2">
-<h2 id="org120b543"><span class="section-number-2">1</span> How to read the syntax tree of golang</h2>
-<div class="outline-text-2" id="text-1">
+</p>
+
 <p>
 I will explain in this article how to understand some of the fields in
 the syntax tree output by the golang compiler.
 </p>
+
 </div>
-<div id="outline-container-org131a9fc" class="outline-3">
-<h3 id="org131a9fc"><span class="section-number-3">1.1</span> Get syntax tree</h3>
-<div class="outline-text-3" id="text-1-1">
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orge86b796">1. Get syntax tree</a></li>
+<li><a href="#orge9468b8">2. The general impression of the syntax tree</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orge86b796" class="outline-2">
+<h2 id="orge86b796"><span class="section-number-2">1</span> Get syntax tree</h2>
+<div class="outline-text-2" id="text-1">
 <p>
 We can get the syntax tree as follows:
 </p>
@@ -349,9 +350,9 @@ after walk f1
 </div>
 </div>
 
-<div id="outline-container-org92eb133" class="outline-3">
-<h3 id="org92eb133"><span class="section-number-3">1.2</span> The general impression of the syntax tree</h3>
-<div class="outline-text-3" id="text-1-2">
+<div id="outline-container-orge9468b8" class="outline-2">
+<h2 id="orge9468b8"><span class="section-number-2">2</span> The general impression of the syntax tree</h2>
+<div class="outline-text-2" id="text-2">
 <p>
 Take a closer look at this piece of output text:
 </p>
@@ -397,7 +398,6 @@ Possibly still more uses. If you find any, document them.
 <li><code>INDREGSP-SP</code>: offset plus indirect of REGSP</li>
 <li><code>addrtaken</code>: address taken, even if not moved to heap</li>
 </ul>
-</div>
 </div>
 </div>
 </div>

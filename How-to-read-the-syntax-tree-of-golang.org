@@ -1,8 +1,14 @@
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
+#+TITLE: How to read the syntax tree of golang
+#+KEYWORDS: golang
+#+OPTIONS: toc:nil num:3 H:4 ^:nil pri:t
+#+BEGIN_abstract
 
-* How to read the syntax tree of golang
 I will explain in this article how to understand some of the fields in
 the syntax tree output by the golang compiler.
+#+END_abstract
+#+TOC: headlines 2
+
 ** Get syntax tree
 We can get the syntax tree as follows:
 
