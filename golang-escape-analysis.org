@@ -13,7 +13,7 @@ golang's escape analysis.
 
 
 
-** TODO Some examples
+** Examples
 *** example 1
 #+BEGIN_SRC go
   // go tool compile -m -m -m -m -l main.go
@@ -26,32 +26,23 @@ golang's escape analysis.
 #+END_SRC    
 compiler output:
 #+BEGIN_SRC 
-escAnalyze [0xc000384000]
-.   DCLFUNC l(3) esc(no) tc(1) FUNC-func(int) *int
+escAnalyze [0xc000376000]
+.   DCLFUNC l(4) esc(no) tc(1) FUNC-func(int) *int
 .   DCLFUNC-body
-.   .   AS l(4) tc(1)
-.   .   .   NAME-main.b a(true) g(1) l(3) x(0) class(PPARAMOUT) tc(1) assigned PTR-*int
-.   .   .   ADDR l(4) tc(1) PTR-*int
-.   .   .   .   NAME-main.a a(true) g(2) l(3) x(0) class(PPARAM) tc(1) addrtaken used int
-
-.   .   RETURN l(5) tc(1)
-main.go:4:4:[1] f1 esc: b
-main.go:4:6:[1] f1 esc: a
-main.go:4:6:[1] f1 esc: &a
-main.go:4:4:[1] f1 esc: b = &a
-main.go:4:4:[1] f1 escassign: b( a(true) g(1) l(3) x(0) class(PPARAMOUT) tc(1) assigned)[NAME] = &a( l(4) esc(no) ld(1) tc(1))[&]
-main.go:4:6::flows:: b <- &a
-main.go:5:2:[1] f1 esc: return 
-
-escflood:0: dst b scope:f1[0]
-escwalk: level:{0 0} depth:0  op=& &a( l(4) esc(no) ld(1) tc(1)) scope:f1[1] extraloopdepth=-1
-main.go:4:6: &a escapes to heap, level={0 0}, dst=b dst.eld=0, src.eld=1
-main.go:3:9: moved to heap: a
-escwalk: level:{-1 -1} depth:1 	 op=NAME a( a(true) g(2) l(3) x(0) class(PAUTOHEAP) esc(h) ld(1) tc(1) addrtaken used) scope:f1[1] extraloopdepth=1
+.   .   AS l(5) tc(1)
+.   .   .   NAME-main.b a(true) g(1) l(4) x(0) class(PPARAMOUT) tc(1) assigned PTR-*int
+.   .   .   ADDR l(5) tc(1) PTR-*int
+.   .   .   .   NAME-main.a a(true) g(2) l(4) x(0) class(PPARAM) tc(1) addrtaken used int
+.   .   RETURN l(6) tc(1)
+main.go:5:4:[1] f1 stmt: b = &a
+main.go:6:2:[1] f1 stmt: return 
+main.go:4:9: moved to heap: a
 #+END_SRC
-- '&a' escapes to heap
-- 'a' moved to heap
-*** TODO example 2
+Var =a= is referenced by =b=, then =b= is returned to the
+caller. Since we don't know what the caller will do on var =b= (may
+assign it to a global var), so =a= needs to be stored in the heap.
+
+*** example 2
 #+BEGIN_SRC  go
   // go tool compile -m -m -m -m -l main.go
   package main
@@ -61,74 +52,129 @@ escwalk: level:{-1 -1} depth:1 	 op=NAME a( a(true) g(2) l(3) x(0) class(PAUTOHE
   }
 #+END_SRC
 #+BEGIN_SRC 
-escAnalyze [0xc0000d82c0]
-.   DCLFUNC l(19) esc(no) tc(1) FUNC-func(*int) *int
+escAnalyze [0xc0002d62c0]
+.   DCLFUNC l(9) esc(no) tc(1) FUNC-func(*int) *int
 .   DCLFUNC-body
-.   .   RETURN l(20) tc(1)
+.   .   RETURN l(10) tc(1)
 .   .   RETURN-list
-.   .   .   NAME-main.a a(true) g(2) l(19) x(0) class(PPARAM) tc(1) used PTR-*int
-main.go:20:2:[1] f2 esc: a
-main.go:20:2:[1] f2 esc: return a
-main.go:20:2:[1] f2 escassign: ~r1( a(true) g(1) l(19) x(0) class(PPARAMOUT))[NAME] = a( a(true) g(2) l(19) x(0) class(PPARAM) esc(no) ld(1) tc(1) used)[NAME]
-main.go:20:2::flows:: ~r1 <- a
-
-escflood:0: dst ~r1 scope:f2[0]
-escwalk: level:{0 0} depth:0  op=NAME a( a(true) g(2) l(19) x(0) class(PPARAM) esc(no) ld(1) tc(1) used) scope:f2[1] extraloopdepth=-1
-main.go:19:9: leaking param: a to result ~r1 level={0 0}
+.   .   .   NAME-main.a a(true) g(2) l(9) x(0) class(PPARAM) tc(1) used PTR-*int
+main.go:10:2:[1] f2 stmt: return a
+main.go:9:9: leaking param: a to result ~r1 level=0
 #+END_SRC
+=~r1= in compiler output means 1st return variable, it's auto
+generated.  func =f2= just return param =a=, so it =a= doesn't need to
+move to heap(no one know its addr at all after the end of =f2='s execution).
 
+For its caller, if the caller has a variable =x=, caller uses =&x= as
+the param of =f2=, then assign the result to a global var.  Obviously,
+=x= needs to move to heap. So when caller analyzes =x= whether it needs
+move to heap, caller needs the information of =f2=, which is the sentence
+in compiler output: 
+#+BEGIN_QUOTE
+leaking param: a to result ~r1 level=0
+#+END_QUOTE
 
 *** example 3
 #+BEGIN_SRC go
-  // go tool compile -m -m -m -l main.go
-  package main
-  type A interface {
-	  AA(a int)
-  }
+// go tool compile -m -m -m -m -l main.go
+package main
 
-  func f2(a A) {
-	  b := 1
-	  a.AA(b)
-  }
+var g *int
+
+func ff(a *int) {
+	g = a
+}
+
+func f() {
+	a := 1
+	ff(&a)
+}
 #+END_SRC
 #+BEGIN_SRC 
-main.go:8:2:[1] f2 esc: b
-main.go:8:2:[1] f2 esc: var b int
-main.go:8:4:[1] f2 esc: b
-main.go:8:7:[1] f2 esc: 1
-main.go:8:4:[1] f2 esc: b := 1
-main.go:8:4:[1] f2 escassign: b( a(true) g(2) l(8) x(0) class(PAUTO) ld(1) tc(1) used)[NAME] = 1( l(8) tc(1))[LITERAL]
-main.go:9:3:[1] f2 esc: a
-main.go:9:3:[1] f2 esc: a.AA
-main.go:9:6:[1] f2 esc: b
-main.go:9:6:[1] f2 esc: a.AA(b)
-main.go:9:6:[1] f2 escassign: .sink( x(0) class(PEXTERN) ld(-1))[NAME] = b( a(true) g(2) l(8) x(0) class(PAUTO) ld(1) tc(1) used)[NAME]
-main.go:9:6:[1] f2 escassign: .sink( x(0) class(PEXTERN) ld(-1))[NAME] = a( a(true) g(1) l(7) x(0) class(PPARAM) esc(no) ld(1) tc(1) used)[NAME]
-
-escflood:0: dst .sink scope:<S>[-1]
-escwalk: level:{0 0} depth:0  op=NAME a( a(true) g(1) l(7) x(0) class(PPARAM) esc(no) ld(1) tc(1) used) scope:f2[1] extraloopdepth=-1
-main.go:7:9: leaking param: a level={0 0} dst.eld=-1 src.eld=1 dst=.sink
-<autogenerated>:1:[1] A.AA esc: .this
-<autogenerated>:1:[1] A.AA esc: .this.AA
-<autogenerated>:1:[1] A.AA esc: a
-<autogenerated>:1:[1] A.AA esc: .this.AA(a)
-<autogenerated>:1:[1] A.AA escassign: .sink( x(0) class(PEXTERN) ld(-1))[NAME] = a( a(true) g(2) l(4) x(0) class(PPARAM) ld(1) tc(1) used)[NAME]
-<autogenerated>:1:[1] A.AA escassign: .sink( x(0) class(PEXTERN) ld(-1))[NAME] = .this( a(true) g(1) l(1) x(0) class(PPARAM) esc(no) ld(1) tc(1) used)[NAME]
-
-escflood:0: dst .sink scope:A.AA[-1]
-escwalk: level:{0 0} depth:0  op=NAME .this( a(true) g(1) l(1) x(0) class(PPARAM) esc(no) ld(1) tc(1) used) scope:A.AA[1] extraloopdepth=-1
-<autogenerated>:1: leaking param: .this level={0 0} dst.eld=-1 src.eld=1 dst=.sink
+escAnalyze [0xc000396000]
+.   DCLFUNC l(6) esc(no) tc(1) FUNC-func(*int)
+.   DCLFUNC-body
+.   .   AS l(7) tc(1)
+.   .   .   NAME-main.g a(true) l(4) x(0) class(PEXTERN) tc(1) assigned PTR-*int
+.   .   .   NAME-main.a a(true) g(1) l(6) x(0) class(PPARAM) tc(1) used PTR-*int
+main.go:7:4:[1] ff stmt: g = a
+main.go:6:9: leaking param: a
+escAnalyze [0xc000396160]
+.   DCLFUNC l(10) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.    ........
+main.go:11:4:[1] f stmt: a := 1
+main.go:11:2:[1] f stmt: var a int
+main.go:12:4:[1] f stmt: ff(&a)
+main.go:11:2: moved to heap: a
 #+END_SRC
+As mentioned in the previous example, =f= as a caller, when analyzing
+=a= need to move to heap, need the auxiliary information of =ff=.
+For this example, it is:
+#+BEGIN_QUOTE
+leaking param: a
+#+END_QUOTE
+So var =a= move to heap in =f=.
+
+*** example 4
+#+BEGIN_SRC go
+// go tool compile -m -m -m -m -l main.go
+package main
+
+type A interface {
+	F(a *int)
+}
+
+func f() {
+	var a A
+	b := 1
+	a.F(&b)
+}
+#+END_SRC
+#+BEGIN_SRC 
+escAnalyze [0xc0002e0160]
+.   DCLFUNC l(8) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   ............
+main.go:9:6:[1] f stmt: var a A
+main.go:9:6:[1] f stmt: a = <N>
+main.go:10:4:[1] f stmt: b := 1
+main.go:10:2:[1] f stmt: var b int
+main.go:11:5:[1] f stmt: a.F(&b)
+main.go:10:2: moved to heap: b
+escAnalyze [0xc0002e02c0]
+.   DCLFUNC l(1) esc(no) tc(1) FUNC-method(A) func(*int)
+.   DCLFUNC-body
+.   .   CALLINTER l(1) tc(1)
+.   .   .   DOTINTER l(1) x(0) tc(1) main.F FUNC-method(*struct {}) func(*int)
+.   .   .   .   NAME-main..this a(true) g(1) l(1) x(0) class(PPARAM) tc(1) used main.A
+.   .   CALLINTER-list
+.   .   .   NAME-main.a a(true) g(2) l(5) x(0) class(PPARAM) tc(1) used PTR-*int
+<autogenerated>:1:[1] A.F stmt: .this.F(a)
+<autogenerated>:1: leaking param: .this
+main.go:5:4: leaking param: a
+#+END_SRC
+In this example, the type of =a= is =A= (interface), so =a.F(...)= is
+=dynamic call=. For this case, put =a= and =b= move to heap directly.
+The escape analysis of golang can't analyze the param in the case of
+dynamic call.  After all, it don’t know the concrete implementation
+of =a.F= at compile time.
+
+
 ** high level steps of escape analysis
    Analyze all defined functions from the bottom up(=visitBottomUp=),
    analyze a set of functions (recursively with each other) or a
-   function each time using =escAnalyze=.
+   function each time using =escapeFuncs=.
    
-   The general flow of =escAnalyze=:
-   - Construct all flows of src -> dst (=escfunc=)
-   - Traverse all dsts, mark on =Node= that meets the escape condition (=escflood=)
-
-** visitBottomUp
+   The overview of =escapeFuncs=:
+   - Construct data-flow graph from syntax trees. (=initFunc=, =walkFunc=)
+     - new location for all lcoal variable
+     - walk the body of function
+   - Computes the minimal dereferences between all pairs of locations,
+     mark the location that needs to escape to heap. (=walkAll=)
+   - Find the locations that escapes to the heap. (=finish=)
+** Source Analysis
+*** visitBottomUp
    The entry in =escape analysis= is the =escapes= function.
 #+BEGIN_SRC go
 func escapes(all []*Node) {
@@ -148,6 +194,23 @@ func visitBottomUp(list []*Node, analyze func(list []*Node, recursive bool)) {
 #+END_SRC   
 On the whole, =[]*Node= can be seen as a list of trees, also as a graph, because
 some subtrees are connected to each other.
+ #+BEGIN_SRC dot :file images/golang-escape-analysis-1.png :exports results
+   digraph {
+	   main -> N1;
+	   main -> N4;
+	   main -> N5;
+	   N1 -> N2;
+	   N2 -> N3;
+	   N2 -> N7;
+	   N7 -> N3;
+	   N3 -> N2;
+	   N4;
+	   N5 -> N6;
+   }
+#+END_SRC
+
+#+RESULTS:
+[[file:images/golang-escape-analysis-1.png]]
 
 As you can see from the name of =visitBottomUp=, it will traverse from bottom to
 top, and its argument =analyze='s first argument =list= is =[]*Node=, its
@@ -160,14 +223,146 @@ This includes 2 cases:
 - Several functions that are called recursively to each other
 - Single function
 
+For the above case in the picture, let's write the corresponding code
+and print out the output of the compiler.
+#+BEGIN_SRC go
+// go tool compile -m -m -m -m -l main.go
+package main
 
+func main() {
+	N2()
+	N1()
+	N4()
+	N5()
+}
 
-** draft notes
-   - What does 'loopdepth' do?
-     
-   - what is sink node?
+func N1() {
+	N2()
+}
 
-   - what's level.copy for?
+func N4() {}
 
+func N5() {
+	N6()
+}
+func N2() {
+	N3()
+	N7()
+}
+
+func N6() {}
+func N3() {
+	N2()
+}
+
+func N7() {
+	N3()
+}
+#+END_SRC
+compiler output:
+#+BEGIN_SRC 
+escAnalyze [0xc0002ca6e0]	## N2
+.   DCLFUNC l(20) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(21) tc(1)
+.   .   .   NAME-main.N3 a(true) l(26) x(0) class(PFUNC) tc(1) used FUNC-func()
+
+.   .   CALLFUNC l(22) tc(1)
+.   .   .   NAME-main.N7 a(true) l(30) x(0) class(PFUNC) tc(1) used FUNC-func()
+escAnalyze [0xc0002ca9a0]	## N3
+.   DCLFUNC l(26) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(27) tc(1)
+.   .   .   NAME-main.N2 a(true) l(20) x(0) class(PFUNC) tc(1) used FUNC-func()
+escAnalyze [0xc0002cab00]	## N7
+.   DCLFUNC l(30) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(31) tc(1)
+.   .   .   NAME-main.N3 a(true) l(26) x(0) class(PFUNC) tc(1) used FUNC-func()
+main.go:21:4:[1] N2 stmt: N3()
+main.go:22:4:[1] N2 stmt: N7()
+main.go:27:4:[1] N3 stmt: N2()
+main.go:31:4:[1] N7 stmt: N3()
+escAnalyze [0xc0002ca2c0]	## N1
+.   DCLFUNC l(11) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(12) tc(1)
+.   .   .   NAME-main.N2 a(true) l(20) x(0) class(PFUNC) tc(1) used FUNC-func()
+main.go:12:4:[1] N1 stmt: N2()
+escAnalyze [0xc0002ca420]	## N4
+.   DCLFUNC l(15) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   EMPTY l(15) tc(1)
+main.go:15:6:[1] N4 stmt: 
+escAnalyze [0xc0002ca840]	## N6
+.   DCLFUNC l(25) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   EMPTY l(25) tc(1)
+main.go:25:6:[1] N6 stmt: 
+escAnalyze [0xc0002ca580]	## N5
+.   DCLFUNC l(17) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(18) tc(1)
+.   .   .   NAME-main.N6 a(true) l(25) x(0) class(PFUNC) tc(1) used FUNC-func()
+main.go:18:4:[1] N5 stmt: N6()
+escAnalyze [0xc0002ca160]	## main
+.   DCLFUNC l(4) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(5) tc(1)
+.   .   .   NAME-main.N2 a(true) l(20) x(0) class(PFUNC) tc(1) used FUNC-func()
+
+.   .   CALLFUNC l(6) tc(1)
+.   .   .   NAME-main.N1 a(true) l(11) x(0) class(PFUNC) tc(1) used FUNC-func()
+
+.   .   CALLFUNC l(7) tc(1)
+.   .   .   NAME-main.N4 a(true) l(15) x(0) class(PFUNC) tc(1) used FUNC-func()
+
+.   .   CALLFUNC l(8) tc(1)
+.   .   .   NAME-main.N5 a(true) l(17) x(0) class(PFUNC) tc(1) used FUNC-func()
+main.go:5:4:[1] main stmt: N2()
+main.go:6:4:[1] main stmt: N1()
+main.go:7:4:[1] main stmt: N4()
+main.go:8:4:[1] main stmt: N5()
+#+END_SRC
+We can see that the functions that recursive each other are in a
+group, and the other functions are each in a group, as shown in the
+figure.
+#+BEGIN_SRC dot :file images/golang-escape-analysis-2.png :exports results
+  digraph {
+	  subgraph cluster_G0{ main; }
+	  subgraph cluster_G1{ N1; }
+	  subgraph cluster_G2{ N4; }
+	  subgraph cluster_G3{ N5; }
+	  subgraph cluster_G4{ N6; }
+	  subgraph cluster_G5{
+		  label="Recursive group"
+		  N2;
+		  N3;
+		  N7;
+	  }
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:images/golang-escape-analysis-2.png]]
+
+*** TODO walkOne
+*** outlives
+#+BEGIN_QUOTE
+;; outlives reports whether values stored in l may survive beyond
+
+;; other's lifetime if stack allocated.
+
+func (e *Escape) outlives(l, other *EscLocation) bool 
+#+END_QUOTE    
+This function is used to analyze whether the life cycle of =l= is longer than =other=.
+1. If =l= is =heapLoc=, then its life cycle must be longer than
+   =other=, even if =other= is also =heapLoc=, this conclusion will
+   not cause problems
+2. If =l= is =return value=, because we dont know caller behavior, we also treat =l= like =heapLoc=
+3. If l and other are within the same function, then l outlives other
+   if it was declared outside other's loop scope (copied from source comment)
+4. If the function containing =other= is the sub closure of the function containing =l=, =l= outlives =other=
+   
 ** references
 - https://web.archive.org/web/20170930011137/http://blog.rocana.com/golang-escape-analysis
