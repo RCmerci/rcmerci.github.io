@@ -4,4 +4,4 @@
 ((org-mode
   (org-html-postamble . nil)
   (org-html-preamble-format
-   ("en" "<p class=\"author\">Author: %a</p>\n<p class=\"date\">Updated: %C</p>"))))
+   ("en" "<p class=\"date\">Updated: %C</p>"))))
