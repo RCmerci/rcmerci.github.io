@@ -2,59 +2,38 @@
 #+TITLE: leetcode notes
 #+KEYWORDS: algorithm
 
-* HashTable
-** Some questions that need to be practiced several times
-   - 76. Minimum Window Substring
-   - 149. Max Points on a Line
-   - 336. Palindrome Pairs
-   - 347. Top K Frequent Elements
-* Array
 
+* 1 two sum
+#+BEGIN_SRC go
+  import (
+          "fmt"
+  )
 
-* Bit Manipulation
-  - 187. Repeated DNA Sequences
+  func twoSum(nums []int, target int) []int {
+          m := map[int]int{}
+          for i := range nums {
+                  ind, ok := m[target-nums[i]]
+                  if ok {
+                          return []int{ind, i}
+                  }
+                  m[nums[i]] = i
+          }
+          return nil
+  }
 
-* notes
-*** substring problem template (copy from 'Discuss' of 76)        :hashtable:
-    For most substring problem, we are given a string and need to find
-    a substring of it which satisfy some restrictions. A general way
-    is to use a hashmap assisted with two pointers. The template is
-    given below.
-#+BEGIN_SRC java
- int findSubstring(string s){
-        vector<int> map(128,0);
-        int counter; // check whether the substring is valid
-        int begin=0, end=0; //two pointers, one point to tail and one  head
-        int d; //the length of substring
+  func main() {
+          fmt.Printf("%+v\n", twoSum([]int{2, 7, 11, 15}, 9)) // output for debug
 
-        for() { /* initialize the hash map here */ }
-
-        while(end<s.size()){
-
-            if(map[s[end++]]-- ?){  /* modify counter here */ }
-
-            while(/* counter condition */){ 
-                 
-                 /* update d here if finding minimum*/
-
-                //increase begin to make it invalid/valid again
-                
-                if(map[s[begin++]]++ ?){ /*modify counter here*/ }
-            }  
-
-            /* update d here if finding maximum*/
-        }
-        return d;
   }
 #+END_SRC
 
-*** Inaccurate division precision                                      :math:
-    Save result of a/b as (a/gcd, b/gcd).
-    Save the numerator and denominator, which were divided by the greatest common divisor(gcd).
+#+RESULTS:
+: [0 1]
 
-*** Consider bucket sorting                                            :sort:
-    - The problem can be solved by sorting, but requires O(n)
-    - The * element* that will appear can be determined in advance
+* 2 add two numbers
+#+BEGIN_SRC go
 
-  
+#+END_SRC
+
+
 
