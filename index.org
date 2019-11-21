@@ -3,5 +3,5 @@
 - [[https://rcmerci.github.io/golang-escape-analysis.org.html][Golang escape analysis]]
 - [[https://rcmerci.github.io/How-to-read-the-syntax-tree-of-golang.org.html][How to read the syntax tree of golang]]
 - [[https://rcmerci.github.io/compiling_with_continuations_notes.org.html][Compiling with continuations Notes(1)]]
-
+- [[https://rcmerci.github.io/leetcode-notes.org.html][Leetcode Notes]]
 
