@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-05-14 二 19:44 -->
+<!-- 2019-05-16 Thu 00:45 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Golang escape analysis</title>
@@ -232,7 +232,7 @@ for the JavaScript code in this tag.
 <body>
 <div id="preamble" class="status">
 <p class="author">Author: rcmerci</p>
-<p class="date">Updated: 2019-05-14 二 19:44</p>
+<p class="date">Updated: 2019-05-16 Thu 00:45</p>
 </div>
 <div id="content">
 <h1 class="title">Golang escape analysis</h1>
@@ -247,17 +247,23 @@ golang's escape analysis.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org26010b0">1. <span class="todo TODO">TODO</span> Some examples</a>
+<li><a href="#org47286d2">1. Examples</a>
 <ul>
-<li><a href="#org4a7cffc">1.1. example 1</a></li>
-<li><a href="#org406c998">1.2. <span class="todo TODO">TODO</span> example 2</a></li>
-<li><a href="#org85c96d3">1.3. example 3</a></li>
+<li><a href="#orgf3ce69a">1.1. example 1</a></li>
+<li><a href="#org24bac18">1.2. example 2</a></li>
+<li><a href="#org079c41c">1.3. example 3</a></li>
+<li><a href="#orgcb965a5">1.4. example 4</a></li>
 </ul>
 </li>
-<li><a href="#orga07922c">2. high level steps of escape analysis</a></li>
-<li><a href="#org36647e2">3. visitBottomUp</a></li>
-<li><a href="#org39f905a">4. draft notes</a></li>
-<li><a href="#orgf2766fc">5. references</a></li>
+<li><a href="#org19b7825">2. high level steps of escape analysis</a></li>
+<li><a href="#org9d7f1e7">3. Source Analysis</a>
+<ul>
+<li><a href="#org7a4c746">3.1. visitBottomUp</a></li>
+<li><a href="#orgd400136">3.2. <span class="todo TODO">TODO</span> walkOne</a></li>
+<li><a href="#org13ca043">3.3. outlives</a></li>
+</ul>
+</li>
+<li><a href="#org7e14229">4. references</a></li>
 </ul>
 </div>
 </div>
@@ -265,12 +271,12 @@ golang's escape analysis.
 
 
 
-<div id="outline-container-org26010b0" class="outline-2">
-<h2 id="org26010b0"><span class="section-number-2">1</span> <span class="todo TODO">TODO</span> Some examples</h2>
+<div id="outline-container-org47286d2" class="outline-2">
+<h2 id="org47286d2"><span class="section-number-2">1</span> Examples</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org4a7cffc" class="outline-3">
-<h3 id="org4a7cffc"><span class="section-number-3">1.1</span> example 1</h3>
+<div id="outline-container-orgf3ce69a" class="outline-3">
+<h3 id="orgf3ce69a"><span class="section-number-3">1.1</span> example 1</h3>
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 <pre class="src src-go"><span style="color: #40883f;">// </span><span style="color: #40883f;">go tool compile -m -m -m -m -l main.go</span>
@@ -286,37 +292,28 @@ golang's escape analysis.
 compiler output:
 </p>
 <pre class="example">
-escAnalyze [0xc000384000]
-.   DCLFUNC l(3) esc(no) tc(1) FUNC-func(int) *int
+escAnalyze [0xc000376000]
+.   DCLFUNC l(4) esc(no) tc(1) FUNC-func(int) *int
 .   DCLFUNC-body
-.   .   AS l(4) tc(1)
-.   .   .   NAME-main.b a(true) g(1) l(3) x(0) class(PPARAMOUT) tc(1) assigned PTR-*int
-.   .   .   ADDR l(4) tc(1) PTR-*int
-.   .   .   .   NAME-main.a a(true) g(2) l(3) x(0) class(PPARAM) tc(1) addrtaken used int
-
-.   .   RETURN l(5) tc(1)
-main.go:4:4:[1] f1 esc: b
-main.go:4:6:[1] f1 esc: a
-main.go:4:6:[1] f1 esc: &amp;a
-main.go:4:4:[1] f1 esc: b = &amp;a
-main.go:4:4:[1] f1 escassign: b( a(true) g(1) l(3) x(0) class(PPARAMOUT) tc(1) assigned)[NAME] = &amp;a( l(4) esc(no) ld(1) tc(1))[&amp;]
-main.go:4:6::flows:: b &lt;- &amp;a
-main.go:5:2:[1] f1 esc: return
-
-escflood:0: dst b scope:f1[0]
-escwalk: level:{0 0} depth:0  op=&amp; &amp;a( l(4) esc(no) ld(1) tc(1)) scope:f1[1] extraloopdepth=-1
-main.go:4:6: &amp;a escapes to heap, level={0 0}, dst=b dst.eld=0, src.eld=1
-main.go:3:9: moved to heap: a
-escwalk: level:{-1 -1} depth:1 	 op=NAME a( a(true) g(2) l(3) x(0) class(PAUTOHEAP) esc(h) ld(1) tc(1) addrtaken used) scope:f1[1] extraloopdepth=1
+.   .   AS l(5) tc(1)
+.   .   .   NAME-main.b a(true) g(1) l(4) x(0) class(PPARAMOUT) tc(1) assigned PTR-*int
+.   .   .   ADDR l(5) tc(1) PTR-*int
+.   .   .   .   NAME-main.a a(true) g(2) l(4) x(0) class(PPARAM) tc(1) addrtaken used int
+.   .   RETURN l(6) tc(1)
+main.go:5:4:[1] f1 stmt: b = &amp;a
+main.go:6:2:[1] f1 stmt: return
+main.go:4:9: moved to heap: a
 </pre>
-<ul class="org-ul">
-<li>'&amp;a' escapes to heap</li>
-<li>'a' moved to heap</li>
-</ul>
+<p>
+Var <code>a</code> is referenced by <code>b</code>, then <code>b</code> is returned to the
+caller. Since we don't know what the caller will do on var <code>b</code> (may
+assign it to a global var), so <code>a</code> needs to be stored in the heap.
+</p>
 </div>
 </div>
-<div id="outline-container-org406c998" class="outline-3">
-<h3 id="org406c998"><span class="section-number-3">1.2</span> <span class="todo TODO">TODO</span> example 2</h3>
+
+<div id="outline-container-org24bac18" class="outline-3">
+<h3 id="org24bac18"><span class="section-number-3">1.2</span> example 2</h3>
 <div class="outline-text-3" id="text-1-2">
 <div class="org-src-container">
 <pre class="src src-go"><span style="color: #40883f;">// </span><span style="color: #40883f;">go tool compile -m -m -m -m -l main.go</span>
@@ -328,94 +325,173 @@ escwalk: level:{-1 -1} depth:1 	 op=NAME a( a(true) g(2) l(3) x(0) class(PAUTOHE
 </pre>
 </div>
 <pre class="example">
-escAnalyze [0xc0000d82c0]
-.   DCLFUNC l(19) esc(no) tc(1) FUNC-func(*int) *int
+escAnalyze [0xc0002d62c0]
+.   DCLFUNC l(9) esc(no) tc(1) FUNC-func(*int) *int
 .   DCLFUNC-body
-.   .   RETURN l(20) tc(1)
+.   .   RETURN l(10) tc(1)
 .   .   RETURN-list
-.   .   .   NAME-main.a a(true) g(2) l(19) x(0) class(PPARAM) tc(1) used PTR-*int
-main.go:20:2:[1] f2 esc: a
-main.go:20:2:[1] f2 esc: return a
-main.go:20:2:[1] f2 escassign: ~r1( a(true) g(1) l(19) x(0) class(PPARAMOUT))[NAME] = a( a(true) g(2) l(19) x(0) class(PPARAM) esc(no) ld(1) tc(1) used)[NAME]
-main.go:20:2::flows:: ~r1 &lt;- a
-
-escflood:0: dst ~r1 scope:f2[0]
-escwalk: level:{0 0} depth:0  op=NAME a( a(true) g(2) l(19) x(0) class(PPARAM) esc(no) ld(1) tc(1) used) scope:f2[1] extraloopdepth=-1
-main.go:19:9: leaking param: a to result ~r1 level={0 0}
+.   .   .   NAME-main.a a(true) g(2) l(9) x(0) class(PPARAM) tc(1) used PTR-*int
+main.go:10:2:[1] f2 stmt: return a
+main.go:9:9: leaking param: a to result ~r1 level=0
 </pre>
+<p>
+<code>~r1</code> in compiler output means 1st return variable, it's auto
+generated.  func <code>f2</code> just return param <code>a</code>, so it <code>a</code> doesn't need to
+move to heap(no one know its addr at all after the end of <code>f2</code>'s execution).
+</p>
+
+<p>
+For its caller, if the caller has a variable <code>x</code>, caller uses <code>&amp;x</code> as
+the param of <code>f2</code>, then assign the result to a global var.  Obviously,
+<code>x</code> needs to move to heap. So when caller analyzes <code>x</code> whether it needs
+move to heap, caller needs the information of <code>f2</code>, which is the sentence
+in compiler output:
+</p>
+<blockquote>
+<p>
+leaking param: a to result ~r1 level=0
+</p>
+</blockquote>
 </div>
 </div>
 
-
-<div id="outline-container-org85c96d3" class="outline-3">
-<h3 id="org85c96d3"><span class="section-number-3">1.3</span> example 3</h3>
+<div id="outline-container-org079c41c" class="outline-3">
+<h3 id="org079c41c"><span class="section-number-3">1.3</span> example 3</h3>
 <div class="outline-text-3" id="text-1-3">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #40883f;">// </span><span style="color: #40883f;">go tool compile -m -m -m -l main.go</span>
+<pre class="src src-go"><span style="color: #40883f;">// </span><span style="color: #40883f;">go tool compile -m -m -m -m -l main.go</span>
 <span style="color: #989848;">package</span> main
-<span style="color: #989848;">type</span> <span style="color: #0287c8; font-weight: bold;">A</span> <span style="color: #989848;">interface</span> {
-        <span style="color: #424242; font-weight: bold;">AA</span>(a int)
+
+<span style="color: #989848;">var</span> g *int
+
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">ff</span>(a *<span style="color: #0287c8; font-weight: bold;">int</span>) {
+        g = a
 }
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">f2</span>(a <span style="color: #0287c8; font-weight: bold;">A</span>) {
-        b := 1
-        a.<span style="color: #424242; font-weight: bold;">AA</span>(b)
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">f</span>() {
+        a := 1
+        <span style="color: #424242; font-weight: bold;">ff</span>(&amp;a)
 }
 </pre>
 </div>
 <pre class="example">
-main.go:8:2:[1] f2 esc: b
-main.go:8:2:[1] f2 esc: var b int
-main.go:8:4:[1] f2 esc: b
-main.go:8:7:[1] f2 esc: 1
-main.go:8:4:[1] f2 esc: b := 1
-main.go:8:4:[1] f2 escassign: b( a(true) g(2) l(8) x(0) class(PAUTO) ld(1) tc(1) used)[NAME] = 1( l(8) tc(1))[LITERAL]
-main.go:9:3:[1] f2 esc: a
-main.go:9:3:[1] f2 esc: a.AA
-main.go:9:6:[1] f2 esc: b
-main.go:9:6:[1] f2 esc: a.AA(b)
-main.go:9:6:[1] f2 escassign: .sink( x(0) class(PEXTERN) ld(-1))[NAME] = b( a(true) g(2) l(8) x(0) class(PAUTO) ld(1) tc(1) used)[NAME]
-main.go:9:6:[1] f2 escassign: .sink( x(0) class(PEXTERN) ld(-1))[NAME] = a( a(true) g(1) l(7) x(0) class(PPARAM) esc(no) ld(1) tc(1) used)[NAME]
+escAnalyze [0xc000396000]
+.   DCLFUNC l(6) esc(no) tc(1) FUNC-func(*int)
+.   DCLFUNC-body
+.   .   AS l(7) tc(1)
+.   .   .   NAME-main.g a(true) l(4) x(0) class(PEXTERN) tc(1) assigned PTR-*int
+.   .   .   NAME-main.a a(true) g(1) l(6) x(0) class(PPARAM) tc(1) used PTR-*int
+main.go:7:4:[1] ff stmt: g = a
+main.go:6:9: leaking param: a
+escAnalyze [0xc000396160]
+.   DCLFUNC l(10) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.    ........
+main.go:11:4:[1] f stmt: a := 1
+main.go:11:2:[1] f stmt: var a int
+main.go:12:4:[1] f stmt: ff(&amp;a)
+main.go:11:2: moved to heap: a
+</pre>
+<p>
+As mentioned in the previous example, <code>f</code> as a caller, when analyzing
+<code>a</code> need to move to heap, need the auxiliary information of <code>ff</code>.
+For this example, it is:
+</p>
+<blockquote>
+<p>
+leaking param: a
+</p>
+</blockquote>
+<p>
+So var <code>a</code> move to heap in <code>f</code>.
+</p>
+</div>
+</div>
 
-escflood:0: dst .sink scope:&lt;S&gt;[-1]
-escwalk: level:{0 0} depth:0  op=NAME a( a(true) g(1) l(7) x(0) class(PPARAM) esc(no) ld(1) tc(1) used) scope:f2[1] extraloopdepth=-1
-main.go:7:9: leaking param: a level={0 0} dst.eld=-1 src.eld=1 dst=.sink
-&lt;autogenerated&gt;:1:[1] A.AA esc: .this
-&lt;autogenerated&gt;:1:[1] A.AA esc: .this.AA
-&lt;autogenerated&gt;:1:[1] A.AA esc: a
-&lt;autogenerated&gt;:1:[1] A.AA esc: .this.AA(a)
-&lt;autogenerated&gt;:1:[1] A.AA escassign: .sink( x(0) class(PEXTERN) ld(-1))[NAME] = a( a(true) g(2) l(4) x(0) class(PPARAM) ld(1) tc(1) used)[NAME]
-&lt;autogenerated&gt;:1:[1] A.AA escassign: .sink( x(0) class(PEXTERN) ld(-1))[NAME] = .this( a(true) g(1) l(1) x(0) class(PPARAM) esc(no) ld(1) tc(1) used)[NAME]
+<div id="outline-container-orgcb965a5" class="outline-3">
+<h3 id="orgcb965a5"><span class="section-number-3">1.4</span> example 4</h3>
+<div class="outline-text-3" id="text-1-4">
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #40883f;">// </span><span style="color: #40883f;">go tool compile -m -m -m -m -l main.go</span>
+<span style="color: #989848;">package</span> main
 
-escflood:0: dst .sink scope:A.AA[-1]
-escwalk: level:{0 0} depth:0  op=NAME .this( a(true) g(1) l(1) x(0) class(PPARAM) esc(no) ld(1) tc(1) used) scope:A.AA[1] extraloopdepth=-1
-&lt;autogenerated&gt;:1: leaking param: .this level={0 0} dst.eld=-1 src.eld=1 dst=.sink
+<span style="color: #989848;">type</span> <span style="color: #0287c8; font-weight: bold;">A</span> <span style="color: #989848;">interface</span> {
+        <span style="color: #424242; font-weight: bold;">F</span>(a *int)
+}
+
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">f</span>() {
+        <span style="color: #989848;">var</span> a A
+        b := 1
+        a.<span style="color: #424242; font-weight: bold;">F</span>(&amp;b)
+}
 </pre>
 </div>
+<pre class="example">
+escAnalyze [0xc0002e0160]
+.   DCLFUNC l(8) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   ............
+main.go:9:6:[1] f stmt: var a A
+main.go:9:6:[1] f stmt: a = &lt;N&gt;
+main.go:10:4:[1] f stmt: b := 1
+main.go:10:2:[1] f stmt: var b int
+main.go:11:5:[1] f stmt: a.F(&amp;b)
+main.go:10:2: moved to heap: b
+escAnalyze [0xc0002e02c0]
+.   DCLFUNC l(1) esc(no) tc(1) FUNC-method(A) func(*int)
+.   DCLFUNC-body
+.   .   CALLINTER l(1) tc(1)
+.   .   .   DOTINTER l(1) x(0) tc(1) main.F FUNC-method(*struct {}) func(*int)
+.   .   .   .   NAME-main..this a(true) g(1) l(1) x(0) class(PPARAM) tc(1) used main.A
+.   .   CALLINTER-list
+.   .   .   NAME-main.a a(true) g(2) l(5) x(0) class(PPARAM) tc(1) used PTR-*int
+&lt;autogenerated&gt;:1:[1] A.F stmt: .this.F(a)
+&lt;autogenerated&gt;:1: leaking param: .this
+main.go:5:4: leaking param: a
+</pre>
+<p>
+In this example, the type of <code>a</code> is <code>A</code> (interface), so <code>a.F(...)</code> is
+<code>dynamic call</code>. For this case, put <code>a</code> and <code>b</code> move to heap directly.
+The escape analysis of golang can't analyze the param in the case of
+dynamic call.  After all, it don’t know the concrete implementation
+of <code>a.F</code> at compile time.
+</p>
 </div>
 </div>
-<div id="outline-container-orga07922c" class="outline-2">
-<h2 id="orga07922c"><span class="section-number-2">2</span> high level steps of escape analysis</h2>
+</div>
+
+
+<div id="outline-container-org19b7825" class="outline-2">
+<h2 id="org19b7825"><span class="section-number-2">2</span> high level steps of escape analysis</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 Analyze all defined functions from the bottom up(<code>visitBottomUp</code>),
 analyze a set of functions (recursively with each other) or a
-function each time using <code>escAnalyze</code>.
+function each time using <code>escapeFuncs</code>.
 </p>
 
 <p>
-The general flow of <code>escAnalyze</code>:
+The overview of <code>escapeFuncs</code>:
 </p>
 <ul class="org-ul">
-<li>Construct all flows of src -&gt; dst (<code>escfunc</code>)</li>
-<li>Traverse all dsts, mark on <code>Node</code> that meets the escape condition (<code>escflood</code>)</li>
+<li>Construct data-flow graph from syntax trees. (<code>initFunc</code>, <code>walkFunc</code>)
+<ul class="org-ul">
+<li>new location for all lcoal variable</li>
+<li>walk the body of function</li>
+</ul></li>
+<li>Computes the minimal dereferences between all pairs of locations,
+mark the location that needs to escape to heap. (<code>walkAll</code>)</li>
+<li>Find the locations that escapes to the heap. (<code>finish</code>)</li>
 </ul>
 </div>
 </div>
-
-<div id="outline-container-org36647e2" class="outline-2">
-<h2 id="org36647e2"><span class="section-number-2">3</span> visitBottomUp</h2>
+<div id="outline-container-org9d7f1e7" class="outline-2">
+<h2 id="org9d7f1e7"><span class="section-number-2">3</span> Source Analysis</h2>
 <div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org7a4c746" class="outline-3">
+<h3 id="org7a4c746"><span class="section-number-3">3.1</span> visitBottomUp</h3>
+<div class="outline-text-3" id="text-3-1">
 <p>
 The entry in <code>escape analysis</code> is the <code>escapes</code> function.
 </p>
@@ -441,6 +517,11 @@ On the whole, <code>[]*Node</code> can be seen as a list of trees, also as a gra
 some subtrees are connected to each other.
 </p>
 
+<div class="figure">
+<p><img src="images/golang-escape-analysis-1.png" alt="golang-escape-analysis-1.png" />
+</p>
+</div>
+
 <p>
 As you can see from the name of <code>visitBottomUp</code>, it will traverse from bottom to
 top, and its argument <code>analyze</code>'s first argument <code>list</code> is <code>[]*Node</code>, its
@@ -457,27 +538,164 @@ This includes 2 cases:
 <li>Several functions that are called recursively to each other</li>
 <li>Single function</li>
 </ul>
+
+<p>
+For the above case in the picture, let's write the corresponding code
+and print out the output of the compiler.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #40883f;">// </span><span style="color: #40883f;">go tool compile -m -m -m -m -l main.go</span>
+<span style="color: #989848;">package</span> main
+
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">main</span>() {
+        <span style="color: #424242; font-weight: bold;">N2</span>()
+        <span style="color: #424242; font-weight: bold;">N1</span>()
+        <span style="color: #424242; font-weight: bold;">N4</span>()
+        <span style="color: #424242; font-weight: bold;">N5</span>()
+}
+
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">N1</span>() {
+        <span style="color: #424242; font-weight: bold;">N2</span>()
+}
+
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">N4</span>() {}
+
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">N5</span>() {
+        <span style="color: #424242; font-weight: bold;">N6</span>()
+}
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">N2</span>() {
+        <span style="color: #424242; font-weight: bold;">N3</span>()
+        <span style="color: #424242; font-weight: bold;">N7</span>()
+}
+
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">N6</span>() {}
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">N3</span>() {
+        <span style="color: #424242; font-weight: bold;">N2</span>()
+}
+
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">N7</span>() {
+        <span style="color: #424242; font-weight: bold;">N3</span>()
+}
+</pre>
+</div>
+<p>
+compiler output:
+</p>
+<pre class="example">
+escAnalyze [0xc0002ca6e0]	## N2
+.   DCLFUNC l(20) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(21) tc(1)
+.   .   .   NAME-main.N3 a(true) l(26) x(0) class(PFUNC) tc(1) used FUNC-func()
+
+.   .   CALLFUNC l(22) tc(1)
+.   .   .   NAME-main.N7 a(true) l(30) x(0) class(PFUNC) tc(1) used FUNC-func()
+escAnalyze [0xc0002ca9a0]	## N3
+.   DCLFUNC l(26) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(27) tc(1)
+.   .   .   NAME-main.N2 a(true) l(20) x(0) class(PFUNC) tc(1) used FUNC-func()
+escAnalyze [0xc0002cab00]	## N7
+.   DCLFUNC l(30) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(31) tc(1)
+.   .   .   NAME-main.N3 a(true) l(26) x(0) class(PFUNC) tc(1) used FUNC-func()
+main.go:21:4:[1] N2 stmt: N3()
+main.go:22:4:[1] N2 stmt: N7()
+main.go:27:4:[1] N3 stmt: N2()
+main.go:31:4:[1] N7 stmt: N3()
+escAnalyze [0xc0002ca2c0]	## N1
+.   DCLFUNC l(11) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(12) tc(1)
+.   .   .   NAME-main.N2 a(true) l(20) x(0) class(PFUNC) tc(1) used FUNC-func()
+main.go:12:4:[1] N1 stmt: N2()
+escAnalyze [0xc0002ca420]	## N4
+.   DCLFUNC l(15) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   EMPTY l(15) tc(1)
+main.go:15:6:[1] N4 stmt:
+escAnalyze [0xc0002ca840]	## N6
+.   DCLFUNC l(25) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   EMPTY l(25) tc(1)
+main.go:25:6:[1] N6 stmt:
+escAnalyze [0xc0002ca580]	## N5
+.   DCLFUNC l(17) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(18) tc(1)
+.   .   .   NAME-main.N6 a(true) l(25) x(0) class(PFUNC) tc(1) used FUNC-func()
+main.go:18:4:[1] N5 stmt: N6()
+escAnalyze [0xc0002ca160]	## main
+.   DCLFUNC l(4) esc(no) tc(1) FUNC-func()
+.   DCLFUNC-body
+.   .   CALLFUNC l(5) tc(1)
+.   .   .   NAME-main.N2 a(true) l(20) x(0) class(PFUNC) tc(1) used FUNC-func()
+
+.   .   CALLFUNC l(6) tc(1)
+.   .   .   NAME-main.N1 a(true) l(11) x(0) class(PFUNC) tc(1) used FUNC-func()
+
+.   .   CALLFUNC l(7) tc(1)
+.   .   .   NAME-main.N4 a(true) l(15) x(0) class(PFUNC) tc(1) used FUNC-func()
+
+.   .   CALLFUNC l(8) tc(1)
+.   .   .   NAME-main.N5 a(true) l(17) x(0) class(PFUNC) tc(1) used FUNC-func()
+main.go:5:4:[1] main stmt: N2()
+main.go:6:4:[1] main stmt: N1()
+main.go:7:4:[1] main stmt: N4()
+main.go:8:4:[1] main stmt: N5()
+</pre>
+<p>
+We can see that the functions that recursive each other are in a
+group, and the other functions are each in a group, as shown in the
+figure.
+</p>
+
+<div class="figure">
+<p><img src="images/golang-escape-analysis-2.png" alt="golang-escape-analysis-2.png" />
+</p>
 </div>
 </div>
+</div>
 
+<div id="outline-container-orgd400136" class="outline-3">
+<h3 id="orgd400136"><span class="section-number-3">3.2</span> <span class="todo TODO">TODO</span> walkOne</h3>
+</div>
+<div id="outline-container-org13ca043" class="outline-3">
+<h3 id="org13ca043"><span class="section-number-3">3.3</span> outlives</h3>
+<div class="outline-text-3" id="text-3-3">
+<blockquote>
+<p>
+;; outlives reports whether values stored in l may survive beyond
+</p>
 
+<p>
+;; other's lifetime if stack allocated.
+</p>
 
-<div id="outline-container-org39f905a" class="outline-2">
-<h2 id="org39f905a"><span class="section-number-2">4</span> draft notes</h2>
+<p>
+func (e *Escape) outlives(l, other *EscLocation) bool
+</p>
+</blockquote>
+<p>
+This function is used to analyze whether the life cycle of <code>l</code> is longer than <code>other</code>.
+</p>
+<ol class="org-ol">
+<li>If <code>l</code> is <code>heapLoc</code>, then its life cycle must be longer than
+<code>other</code>, even if <code>other</code> is also <code>heapLoc</code>, this conclusion will
+not cause problems</li>
+<li>If <code>l</code> is <code>return value</code>, because we dont know caller behavior, we also treat <code>l</code> like <code>heapLoc</code></li>
+<li>If l and other are within the same function, then l outlives other
+if it was declared outside other's loop scope (copied from source comment)</li>
+<li>If the function containing <code>other</code> is the sub closure of the function containing <code>l</code>, <code>l</code> outlives <code>other</code></li>
+</ol>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org7e14229" class="outline-2">
+<h2 id="org7e14229"><span class="section-number-2">4</span> references</h2>
 <div class="outline-text-2" id="text-4">
-<ul class="org-ul">
-<li>What does 'loopdepth' do?</li>
-
-<li>what is sink node?</li>
-
-<li>what's level.copy for?</li>
-</ul>
-</div>
-</div>
-
-<div id="outline-container-orgf2766fc" class="outline-2">
-<h2 id="orgf2766fc"><span class="section-number-2">5</span> references</h2>
-<div class="outline-text-2" id="text-5">
 <ul class="org-ul">
 <li><a href="https://web.archive.org/web/20170930011137/http://blog.rocana.com/golang-escape-analysis">https://web.archive.org/web/20170930011137/http://blog.rocana.com/golang-escape-analysis</a></li>
 </ul>
