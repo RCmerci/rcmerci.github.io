@@ -3,7 +3,7 @@
 #+KEYWORDS: algorithm
 
 
-* two sum
+** two sum
 #+BEGIN_SRC go
   package main
   import (
@@ -31,7 +31,7 @@
 #+RESULTS:
 : [0 1]
 
-* add two numbers
+** add two numbers
 #+BEGIN_SRC go
 package main
 import (
@@ -105,7 +105,7 @@ func main() {
 : &{Val:8 Next:<nil>}
 : <nil>
 
-* Longest Substring Without Repeating Characters
+** Longest Substring Without Repeating Characters
 #+BEGIN_SRC go
   package main
 
@@ -145,7 +145,7 @@ func main() {
 : 3
 : 2
 
-* Median of Two Sorted Arrays
+** Median of Two Sorted Arrays
 #+BEGIN_SRC go
   package main
 
@@ -213,3 +213,53 @@ func main() {
 #+RESULTS:
 : 4
 
+** Longest Palindromic Substring
+#+BEGIN_SRC go
+  package main
+
+  import (
+          "fmt"
+  )
+
+  func longestPalindrome(s string) string {
+          if len(s) == 0 {
+                  return ""
+          }
+          m := [1000][1000]bool{}
+          for i := 0; i < len(s); i++ {
+                  m[i][i] = true
+          }
+          for l := 1; l < len(s); l++ {
+                  for i := 0; i+l < len(s); i++ {
+
+                          if i+1 <= i+l-1 && m[i+1][i+l-1] && s[i] == s[i+l] {
+                                  m[i][i+l] = true
+                          } else if l == 1 && s[i] == s[i+l] {
+                                  m[i][i+l] = true
+                          }
+                  }
+          }
+
+          max := 1
+          maxs := string([]byte(s)[0:1])
+          for i := 0; i < len(s); i++ {
+                  for j := i; j < len(s); j++ {
+                          if m[i][j] && j-i+1 > max {
+                                  max = j - i + 1
+                                  maxs = string([]byte(s)[i : j+1])
+                          }
+                  }
+          }
+          return maxs
+  }
+
+  func main() {
+          fmt.Printf("%+v\n", longestPalindrome("babad")) // output for debug
+          fmt.Printf("%+v\n", longestPalindrome("cbbd"))  // output for debug
+          fmt.Printf("%+v\n", longestPalindrome(""))      // output for debug
+  }
+#+END_SRC
+
+
+* Bear in mind
+  - 检查类似 max, isXXX, flag 的变量是否更新
