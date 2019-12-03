@@ -260,6 +260,107 @@ func main() {
   }
 #+END_SRC
 
+** ZigZag Conversion
+#+BEGIN_SRC go
+func convert(s string, numRows int) string {
+	if numRows == 1 {
+		return s
+	}
+	lines := make([][]byte, numRows)
+	i := 0
+	add := true
+	for _, c := range []byte(s) {
+		lines[i] = append(lines[i], c)
+		if add {
+			if i+1 >= numRows {
+				i--
+				add = false
+			} else {
+				i++
+			}
+		} else {
+			if i-1 < 0 {
+				i++
+				add = true
+			} else {
+				i--
+			}
+		}
+	}
+
+	for i := 1; i < numRows; i++ {
+		lines[0] = append(lines[0], lines[i]...)
+	}
+	return string(lines[0])
+}
+#+END_SRC
+** Reverse Integer
+#+BEGIN_SRC go
+func reverse(x int) int {
+	max := int(math.Pow(2.0, 31.0)) - 1
+	min := int(math.Pow(-2.0, 31.0))
+	r := 0
+	for x != 0 {
+		r = 10*r + (x % 10)
+		if r > max || r < min {
+			return 0
+		}
+		x /= 10
+	}
+	return r
+}
+#+END_SRC
+** String to Integer (atoi)
+#+BEGIN_SRC go
+func myAtoi(str string) int {
+	if str == "" {
+		return 0
+	}
+	max := int(math.Pow(2.0, 31)) - 1
+	min := int(math.Pow(-2.0, 31))
+	i := 0
+	for ; i < len(str); i++ {
+		if str[i] != ' ' {
+			break
+		}
+	}
+	if i == len(str) {
+		return 0
+	}
+	negative := false
+	if str[i] >= '0' && str[i] <= '9' {
+	} else if str[i] == '+' {
+		i++
+	} else if str[i] == '-' {
+		negative = true
+		i++
+	} else {
+		return 0
+	}
+	flag := false
+	r := 0
+	for ; i < len(str); i++ {
+		if str[i] >= '0' && str[i] <= '9' {
+			flag = true
+			r = 10*r + (int(str[i]) - 48)
+			if r > max && !negative {
+				return max
+			} else if (-r) < min && negative {
+				return min
+			}
+		} else if !flag {
+			return 0
+		} else {
+			break
+		}
+	}
+	if negative {
+		return (-r)
+	}
+	return r
+}
+#+END_SRC
 
 * Bear in mind
   - 检查类似 max, isXXX, flag 的变量是否更新
+  - 检查特殊输入,如空字符串
