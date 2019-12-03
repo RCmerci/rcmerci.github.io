@@ -3,31 +3,24 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2019-12-03 二 21:26 -->
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>leetcode notes</title>
-<meta name="generator" content="Org mode" />
-<meta name="author" content="rcmerci" />
-<meta name="keywords" content="algorithm" />
+<!-- 2019-12-03 二 21:29 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="root" />
+<meta  name="keywords" content="algorithm" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
-  .title  { text-align: center;
-             margin-bottom: .2em; }
-  .subtitle { text-align: center;
-              font-size: medium;
-              font-weight: bold;
-              margin-top:0; }
+  .title  { text-align: center; }
   .todo   { font-family: monospace; color: red; }
-  .done   { font-family: monospace; color: green; }
-  .priority { font-family: monospace; color: orange; }
+  .done   { color: green; }
   .tag    { background-color: #eee; font-family: monospace;
             padding: 2px; font-size: 80%; font-weight: normal; }
   .timestamp { color: #bebebe; }
   .timestamp-kwd { color: #5f9ea0; }
-  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
-  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
-  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
   .underline { text-decoration: underline; }
   #postamble p, #preamble p { font-size: 90%; margin: .2em; }
   p.verse { margin-left: 3%; }
@@ -54,111 +47,27 @@
     border: 1px solid black;
   }
   pre.src:hover:before { display: inline;}
-  /* Languages per Org manual */
-  pre.src-asymptote:before { content: 'Asymptote'; }
-  pre.src-awk:before { content: 'Awk'; }
-  pre.src-C:before { content: 'C'; }
-  /* pre.src-C++ doesn't work in CSS */
-  pre.src-clojure:before { content: 'Clojure'; }
-  pre.src-css:before { content: 'CSS'; }
-  pre.src-D:before { content: 'D'; }
-  pre.src-ditaa:before { content: 'ditaa'; }
-  pre.src-dot:before { content: 'Graphviz'; }
-  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
   pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
-  pre.src-fortran:before { content: 'Fortran'; }
-  pre.src-gnuplot:before { content: 'gnuplot'; }
-  pre.src-haskell:before { content: 'Haskell'; }
-  pre.src-hledger:before { content: 'hledger'; }
-  pre.src-java:before { content: 'Java'; }
-  pre.src-js:before { content: 'Javascript'; }
-  pre.src-latex:before { content: 'LaTeX'; }
-  pre.src-ledger:before { content: 'Ledger'; }
-  pre.src-lisp:before { content: 'Lisp'; }
-  pre.src-lilypond:before { content: 'Lilypond'; }
-  pre.src-lua:before { content: 'Lua'; }
-  pre.src-matlab:before { content: 'MATLAB'; }
-  pre.src-mscgen:before { content: 'Mscgen'; }
-  pre.src-ocaml:before { content: 'Objective Caml'; }
-  pre.src-octave:before { content: 'Octave'; }
-  pre.src-org:before { content: 'Org mode'; }
-  pre.src-oz:before { content: 'OZ'; }
-  pre.src-plantuml:before { content: 'Plantuml'; }
-  pre.src-processing:before { content: 'Processing.js'; }
-  pre.src-python:before { content: 'Python'; }
-  pre.src-R:before { content: 'R'; }
-  pre.src-ruby:before { content: 'Ruby'; }
-  pre.src-sass:before { content: 'Sass'; }
-  pre.src-scheme:before { content: 'Scheme'; }
-  pre.src-screen:before { content: 'Gnu Screen'; }
-  pre.src-sed:before { content: 'Sed'; }
-  pre.src-sh:before { content: 'shell'; }
-  pre.src-sql:before { content: 'SQL'; }
-  pre.src-sqlite:before { content: 'SQLite'; }
-  /* additional languages in org.el's org-babel-load-languages alist */
-  pre.src-forth:before { content: 'Forth'; }
-  pre.src-io:before { content: 'IO'; }
-  pre.src-J:before { content: 'J'; }
-  pre.src-makefile:before { content: 'Makefile'; }
-  pre.src-maxima:before { content: 'Maxima'; }
-  pre.src-perl:before { content: 'Perl'; }
-  pre.src-picolisp:before { content: 'Pico Lisp'; }
-  pre.src-scala:before { content: 'Scala'; }
-  pre.src-shell:before { content: 'Shell Script'; }
-  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
-  /* additional language identifiers per "defun org-babel-execute"
-       in ob-*.el */
-  pre.src-cpp:before  { content: 'C++'; }
-  pre.src-abc:before  { content: 'ABC'; }
-  pre.src-coq:before  { content: 'Coq'; }
-  pre.src-groovy:before  { content: 'Groovy'; }
-  /* additional language identifiers from org-babel-shell-names in
-     ob-shell.el: ob-shell is the only babel language using a lambda to put
-     the execution function name together. */
-  pre.src-bash:before  { content: 'bash'; }
-  pre.src-csh:before  { content: 'csh'; }
-  pre.src-ash:before  { content: 'ash'; }
-  pre.src-dash:before  { content: 'dash'; }
-  pre.src-ksh:before  { content: 'ksh'; }
-  pre.src-mksh:before  { content: 'mksh'; }
-  pre.src-posh:before  { content: 'posh'; }
-  /* Additional Emacs modes also supported by the LaTeX listings package */
-  pre.src-ada:before { content: 'Ada'; }
-  pre.src-asm:before { content: 'Assembler'; }
-  pre.src-caml:before { content: 'Caml'; }
-  pre.src-delphi:before { content: 'Delphi'; }
-  pre.src-html:before { content: 'HTML'; }
-  pre.src-idl:before { content: 'IDL'; }
-  pre.src-mercury:before { content: 'Mercury'; }
-  pre.src-metapost:before { content: 'MetaPost'; }
-  pre.src-modula-2:before { content: 'Modula-2'; }
-  pre.src-pascal:before { content: 'Pascal'; }
-  pre.src-ps:before { content: 'PostScript'; }
-  pre.src-prolog:before { content: 'Prolog'; }
-  pre.src-simula:before { content: 'Simula'; }
-  pre.src-tcl:before { content: 'tcl'; }
-  pre.src-tex:before { content: 'TeX'; }
-  pre.src-plain-tex:before { content: 'Plain TeX'; }
-  pre.src-verilog:before { content: 'Verilog'; }
-  pre.src-vhdl:before { content: 'VHDL'; }
-  pre.src-xml:before { content: 'XML'; }
-  pre.src-nxml:before { content: 'XML'; }
-  /* add a generic configuration mode; LaTeX export needs an additional
-     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
-  pre.src-conf:before { content: 'Configuration File'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
 
   table { border-collapse:collapse; }
   caption.t-above { caption-side: top; }
   caption.t-bottom { caption-side: bottom; }
   td, th { vertical-align:top;  }
-  th.org-right  { text-align: center;  }
-  th.org-left   { text-align: center;   }
-  th.org-center { text-align: center; }
-  td.org-right  { text-align: right;  }
-  td.org-left   { text-align: left;   }
-  td.org-center { text-align: center; }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
   dt { font-weight: bold; }
-  .footpara { display: inline; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
   .footdef  { margin-bottom: 1em; }
   .figure { padding: 1em; }
   .figure p { text-align: center; }
@@ -178,7 +87,6 @@
     { font-size: 10px; font-weight: bold; white-space: nowrap; }
   .org-info-js_search-highlight
     { background-color: #ffff00; color: #000000; font-weight: bold; }
-  .org-svg { width: 90%; }
   /*]]>*/-->
 </style>
 <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
@@ -187,7 +95,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2018 Free Software Foundation, Inc.
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -231,8 +139,7 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="preamble" class="status">
-<p class="author">Author: rcmerci</p>
-<p class="date">Updated: 2019-12-03 二 21:26</p>
+<p class="date">Updated: 2019-12-03 二 21:29</p>
 </div>
 <div id="content">
 <h1 class="title">leetcode notes</h1>
@@ -240,43 +147,46 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org9122ae7">0.1. two sum</a></li>
-<li><a href="#org60d94bb">0.2. add two numbers</a></li>
-<li><a href="#orgfc353a5">0.3. Longest Substring Without Repeating Characters</a></li>
-<li><a href="#orgfcf9eec">0.4. Median of Two Sorted Arrays</a></li>
-<li><a href="#org45fee04">0.5. Longest Palindromic Substring</a></li>
-<li><a href="#orgfeae17f">0.6. ZigZag Conversion</a></li>
-<li><a href="#org069f6ae">0.7. Reverse Integer</a></li>
-<li><a href="#org363f8f3">0.8. String to Integer (atoi)</a></li>
+<li><a href="#sec-0-1">0.1. two sum</a></li>
+<li><a href="#sec-0-2">0.2. add two numbers</a></li>
+<li><a href="#sec-0-3">0.3. Longest Substring Without Repeating Characters</a></li>
+<li><a href="#sec-0-4">0.4. Median of Two Sorted Arrays</a></li>
+<li><a href="#sec-0-5">0.5. Longest Palindromic Substring</a></li>
+<li><a href="#sec-0-6">0.6. ZigZag Conversion</a></li>
+<li><a href="#sec-0-7">0.7. Reverse Integer</a></li>
+<li><a href="#sec-0-8">0.8. String to Integer (atoi)</a></li>
+<li><a href="#sec-0-9">0.9. Palindrome Number</a></li>
+<li><a href="#sec-0-10">0.10. Regular Expression Matching</a></li>
 </ul>
 </li>
-<li><a href="#org1acfe1a">1. Bear in mind</a></div>
+<li><a href="#sec-1">1. Bear in mind</a></div>
 </div>
 
 
-<div id="outline-container-org9122ae7" class="outline-3">
-<h3 id="org9122ae7"><span class="section-number-3">0.1</span> two sum</h3>
+<div id="outline-container-sec-0-1" class="outline-3">
+<h3 id="sec-0-1"><span class="section-number-3">0.1</span> two sum</h3>
 <div class="outline-text-3" id="text-0-1">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #989848;">package</span> main
-<span style="color: #989848;">import</span> (
-        <span style="color: #b85c57;">"fmt"</span>
+
+<pre class="src src-go">package main
+import (
+	"fmt"
 )
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">twoSum</span>(nums []<span style="color: #0287c8; font-weight: bold;">int</span>, target <span style="color: #0287c8; font-weight: bold;">int</span>) []<span style="color: #0287c8; font-weight: bold;">int</span> {
-        m := <span style="color: #989848;">map</span>[<span style="color: #0287c8; font-weight: bold;">int</span>]<span style="color: #0287c8; font-weight: bold;">int</span>{}
-        <span style="color: #989848;">for</span> i := <span style="color: #989848;">range</span> nums {
-                ind, ok := m[target-nums[i]]
-                <span style="color: #989848;">if</span> ok {
-                        <span style="color: #989848;">return</span> []<span style="color: #0287c8; font-weight: bold;">int</span>{ind, i}
-                }
-                m[nums[i]] = i
-        }
-        <span style="color: #989848;">return</span> <span style="color: #989848; font-weight: bold;">nil</span>
+func twoSum(nums []int, target int) []int {
+	m := map[int]int{}
+	for i := range nums {
+		ind, ok := m[target-nums[i]]
+		if ok {
+			return []int{ind, i}
+		}
+		m[nums[i]] = i
+	}
+	return nil
 }
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">main</span>() {
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, <span style="color: #424242; font-weight: bold;">twoSum</span>([]<span style="color: #0287c8; font-weight: bold;">int</span>{2, 7, 11, 15}, 9)) <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
+func main() {
+	fmt.Printf("%+v\n", twoSum([]int{2, 7, 11, 15}, 9)) // output for debug
 
 }
 </pre>
@@ -284,362 +194,460 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org60d94bb" class="outline-3">
-<h3 id="org60d94bb"><span class="section-number-3">0.2</span> add two numbers</h3>
+<div id="outline-container-sec-0-2" class="outline-3">
+<h3 id="sec-0-2"><span class="section-number-3">0.2</span> add two numbers</h3>
 <div class="outline-text-3" id="text-0-2">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #989848;">package</span> main
-<span style="color: #989848;">import</span> (
-        <span style="color: #b85c57;">"fmt"</span>
+
+<pre class="src src-go">package main
+import (
+	"fmt"
 )
 
-<span style="color: #40883f;">/**</span>
-<span style="color: #40883f;"> * Definition for singly-linked list.</span>
-<span style="color: #40883f;"> * type ListNode struct {</span>
-<span style="color: #40883f;"> *     Val int</span>
-<span style="color: #40883f;"> *     Next *ListNode</span>
-<span style="color: #40883f;"> * }</span>
-<span style="color: #40883f;"> */</span>
-<span style="color: #989848;">type</span> <span style="color: #0287c8; font-weight: bold;">ListNode</span> <span style="color: #989848;">struct</span> {
-        Val  int
-        Next *ListNode
+/**
+ * Definition for singly-linked list.
+ * type ListNode struct {
+ *     Val int
+ *     Next *ListNode
+ * }
+ */
+type ListNode struct {
+	Val  int
+	Next *ListNode
 }
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">addTwoNumbers</span>(l1 *<span style="color: #0287c8; font-weight: bold;">ListNode</span>, l2 *<span style="color: #0287c8; font-weight: bold;">ListNode</span>) *<span style="color: #0287c8; font-weight: bold;">ListNode</span> {
-        r := <span style="color: #0287c8; font-weight: bold;">ListNode</span>{}
-        tmpr := &amp;r
-        <span style="color: #989848;">var</span> last *ListNode
-        carry := <span style="color: #989848; font-weight: bold;">false</span>
-        <span style="color: #989848;">for</span> {
-                rr := 0
-                <span style="color: #989848;">if</span> carry {
-                        rr += 1
-                        carry = <span style="color: #989848; font-weight: bold;">false</span>
-                }
-                <span style="color: #989848;">if</span> l1 != <span style="color: #989848; font-weight: bold;">nil</span> {
-                        rr += l1.Val
-                        l1 = l1.Next
-                }
-                <span style="color: #989848;">if</span> l2 != <span style="color: #989848; font-weight: bold;">nil</span> {
-                        rr += l2.Val
-                        l2 = l2.Next
-                }
-                <span style="color: #989848;">if</span> rr &gt; 9 {
-                        carry = <span style="color: #989848; font-weight: bold;">true</span>
-                        rr -= 10
-                }
-                <span style="color: #989848;">if</span> rr == 0 &amp;&amp; !carry &amp;&amp; l1 == <span style="color: #989848; font-weight: bold;">nil</span> &amp;&amp; l2 == <span style="color: #989848; font-weight: bold;">nil</span> {
-                        <span style="color: #989848;">if</span> last != <span style="color: #989848; font-weight: bold;">nil</span> {
-                                last.Next = <span style="color: #989848; font-weight: bold;">nil</span>
-                        }
-                        <span style="color: #989848;">return</span> &amp;r
-                }
-                tmpr.Val = rr
-                tmpr.Next = &amp;<span style="color: #0287c8; font-weight: bold;">ListNode</span>{}
-                tmpr.Next.Next = <span style="color: #989848; font-weight: bold;">nil</span>
-                last = tmpr
-                tmpr = tmpr.Next
-        }
-        <span style="color: #989848;">return</span> <span style="color: #989848; font-weight: bold;">nil</span>
+func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
+	r := ListNode{}
+	tmpr := &amp;r
+	var last *ListNode
+	carry := false
+	for {
+		rr := 0
+		if carry {
+			rr += 1
+			carry = false
+		}
+		if l1 != nil {
+			rr += l1.Val
+			l1 = l1.Next
+		}
+		if l2 != nil {
+			rr += l2.Val
+			l2 = l2.Next
+		}
+		if rr &gt; 9 {
+			carry = true
+			rr -= 10
+		}
+		if rr == 0 &amp;&amp; !carry &amp;&amp; l1 == nil &amp;&amp; l2 == nil {
+			if last != nil {
+				last.Next = nil
+			}
+			return &amp;r
+		}
+		tmpr.Val = rr
+		tmpr.Next = &amp;ListNode{}
+		tmpr.Next.Next = nil
+		last = tmpr
+		tmpr = tmpr.Next
+	}
+	return nil
 }
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">main</span>() {
-        l1 := &amp;<span style="color: #0287c8; font-weight: bold;">ListNode</span>{Val: 2, Next: &amp;<span style="color: #0287c8; font-weight: bold;">ListNode</span>{Val: 4, Next: &amp;<span style="color: #0287c8; font-weight: bold;">ListNode</span>{Val: 3, Next: <span style="color: #989848; font-weight: bold;">nil</span>}}}
-        l2 := &amp;<span style="color: #0287c8; font-weight: bold;">ListNode</span>{Val: 5, Next: &amp;<span style="color: #0287c8; font-weight: bold;">ListNode</span>{Val: 6, Next: &amp;<span style="color: #0287c8; font-weight: bold;">ListNode</span>{Val: 4, Next: <span style="color: #989848; font-weight: bold;">nil</span>}}}
-        r := <span style="color: #424242; font-weight: bold;">addTwoNumbers</span>(l1, l2)
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, r)                <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, r.Next)           <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, r.Next.Next)      <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, r.Next.Next.Next) <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
+func main() {
+	l1 := &amp;ListNode{Val: 2, Next: &amp;ListNode{Val: 4, Next: &amp;ListNode{Val: 3, Next: nil}}}
+	l2 := &amp;ListNode{Val: 5, Next: &amp;ListNode{Val: 6, Next: &amp;ListNode{Val: 4, Next: nil}}}
+	r := addTwoNumbers(l1, l2)
+	fmt.Printf("%+v\n", r)                // output for debug
+	fmt.Printf("%+v\n", r.Next)           // output for debug
+	fmt.Printf("%+v\n", r.Next.Next)      // output for debug
+	fmt.Printf("%+v\n", r.Next.Next.Next) // output for debug
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgfc353a5" class="outline-3">
-<h3 id="orgfc353a5"><span class="section-number-3">0.3</span> Longest Substring Without Repeating Characters</h3>
+<div id="outline-container-sec-0-3" class="outline-3">
+<h3 id="sec-0-3"><span class="section-number-3">0.3</span> Longest Substring Without Repeating Characters</h3>
 <div class="outline-text-3" id="text-0-3">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #989848;">package</span> main
 
-<span style="color: #989848;">import</span> (
-        <span style="color: #b85c57;">"fmt"</span>
+<pre class="src src-go">package main
+
+import (
+	"fmt"
 )
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">lengthOfLongestSubstring</span>(s <span style="color: #0287c8; font-weight: bold;">string</span>) <span style="color: #0287c8; font-weight: bold;">int</span> {
-        m := <span style="color: #989848;">map</span>[<span style="color: #0287c8; font-weight: bold;">byte</span>]<span style="color: #0287c8; font-weight: bold;">int</span>{}
-        i, j := 0, 0
-        max := 0
-        <span style="color: #989848;">for</span> ; j &lt; <span style="color: #424242; font-weight: bold;">len</span>(s); j++ {
-                <span style="color: #989848;">if</span> ind, ok := m[s[j]]; ok &amp;&amp; ind &gt;= i {
-                        i = ind + 1
-                }
-                m[s[j]] = j
-                <span style="color: #989848;">if</span> max &lt; j-i+1 {
-                        max = j - i + 1
-                }
-        }
-        <span style="color: #989848;">return</span> max
+func lengthOfLongestSubstring(s string) int {
+	m := map[byte]int{}
+	i, j := 0, 0
+	max := 0
+	for ; j &lt; len(s); j++ {
+		if ind, ok := m[s[j]]; ok &amp;&amp; ind &gt;= i {
+			i = ind + 1
+		}
+		m[s[j]] = j
+		if max &lt; j-i+1 {
+			max = j - i + 1
+		}
+	}
+	return max
 }
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">main</span>() {
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, <span style="color: #424242; font-weight: bold;">lengthOfLongestSubstring</span>(<span style="color: #b85c57;">"abcabcbb"</span>)) <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, <span style="color: #424242; font-weight: bold;">lengthOfLongestSubstring</span>(<span style="color: #b85c57;">"bbbbbbbb"</span>)) <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, <span style="color: #424242; font-weight: bold;">lengthOfLongestSubstring</span>(<span style="color: #b85c57;">"pwwkew"</span>))   <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, <span style="color: #424242; font-weight: bold;">lengthOfLongestSubstring</span>(<span style="color: #b85c57;">"abba"</span>))     <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
+func main() {
+	fmt.Printf("%+v\n", lengthOfLongestSubstring("abcabcbb")) // output for debug
+	fmt.Printf("%+v\n", lengthOfLongestSubstring("bbbbbbbb")) // output for debug
+	fmt.Printf("%+v\n", lengthOfLongestSubstring("pwwkew"))   // output for debug
+	fmt.Printf("%+v\n", lengthOfLongestSubstring("abba"))     // output for debug
 }
-
-
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgfcf9eec" class="outline-3">
-<h3 id="orgfcf9eec"><span class="section-number-3">0.4</span> Median of Two Sorted Arrays</h3>
+<div id="outline-container-sec-0-4" class="outline-3">
+<h3 id="sec-0-4"><span class="section-number-3">0.4</span> Median of Two Sorted Arrays</h3>
 <div class="outline-text-3" id="text-0-4">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #989848;">package</span> main
 
-<span style="color: #989848;">import</span> (
-        <span style="color: #b85c57;">"fmt"</span>
+<pre class="src src-go">package main
+
+import (
+	"fmt"
 )
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">findMedianSortedArrays</span>(nums1 []<span style="color: #0287c8; font-weight: bold;">int</span>, nums2 []<span style="color: #0287c8; font-weight: bold;">int</span>) <span style="color: #0287c8; font-weight: bold;">float64</span> {
-        m := <span style="color: #424242; font-weight: bold;">len</span>(nums1)
-        n := <span style="color: #424242; font-weight: bold;">len</span>(nums2)
-        <span style="color: #989848;">if</span> m &gt; n {
-                n, m = m, n
-                nums1, nums2 = nums2, nums1
-        }
-        imin, imax := 0, m
-        <span style="color: #989848;">for</span> imin &lt;= imax {
-                i := (imin + imax) / 2
-                j := (m+n)/2 - i
-                <span style="color: #989848;">if</span> i &gt; 0 &amp;&amp; nums1[i-1] &gt; nums2[j] {
-                        imax = i - 1
-                } <span style="color: #989848;">else</span> <span style="color: #989848;">if</span> i &lt; imax &amp;&amp; nums2[j-1] &gt; nums1[i] {
-                        imin = i + 1
-                } <span style="color: #989848;">else</span> {
-                        maxleft := 0
-                        minright := 0
-                        <span style="color: #989848;">if</span> i == m {
-                                minright = nums2[j]
-                        } <span style="color: #989848;">else</span> <span style="color: #989848;">if</span> j == n {
-                                minright = nums1[i]
-                        } <span style="color: #989848;">else</span> {
-                                <span style="color: #989848;">if</span> nums1[i] &lt; nums2[j] {
-                                        minright = nums1[i]
-                                } <span style="color: #989848;">else</span> {
-                                        minright = nums2[j]
-                                }
-                        }
-                        <span style="color: #989848;">if</span> (m+n)%2 == 1 {
-                                <span style="color: #989848;">return</span> <span style="color: #424242; font-weight: bold;">float64</span>(minright)
-                        }
-                        <span style="color: #989848;">if</span> i &lt; 1 {
-                                maxleft = nums2[j-1]
-                        } <span style="color: #989848;">else</span> <span style="color: #989848;">if</span> j &lt; 1 {
-                                maxleft = nums1[i-1]
-                        } <span style="color: #989848;">else</span> {
-                                <span style="color: #989848;">if</span> nums1[i-1] &gt; nums2[j-1] {
-                                        maxleft = nums1[i-1]
-                                } <span style="color: #989848;">else</span> {
-                                        maxleft = nums2[j-1]
-                                }
-                        }
+func findMedianSortedArrays(nums1 []int, nums2 []int) float64 {
+	m := len(nums1)
+	n := len(nums2)
+	if m &gt; n {
+		n, m = m, n
+		nums1, nums2 = nums2, nums1
+	}
+	imin, imax := 0, m
+	for imin &lt;= imax {
+		i := (imin + imax) / 2
+		j := (m+n)/2 - i
+		if i &gt; 0 &amp;&amp; nums1[i-1] &gt; nums2[j] {
+			imax = i - 1
+		} else if i &lt; imax &amp;&amp; nums2[j-1] &gt; nums1[i] {
+			imin = i + 1
+		} else {
+			maxleft := 0
+			minright := 0
+			if i == m {
+				minright = nums2[j]
+			} else if j == n {
+				minright = nums1[i]
+			} else {
+				if nums1[i] &lt; nums2[j] {
+					minright = nums1[i]
+				} else {
+					minright = nums2[j]
+				}
+			}
+			if (m+n)%2 == 1 {
+				return float64(minright)
+			}
+			if i &lt; 1 {
+				maxleft = nums2[j-1]
+			} else if j &lt; 1 {
+				maxleft = nums1[i-1]
+			} else {
+				if nums1[i-1] &gt; nums2[j-1] {
+					maxleft = nums1[i-1]
+				} else {
+					maxleft = nums2[j-1]
+				}
+			}
 
-                        <span style="color: #989848;">return</span> <span style="color: #424242; font-weight: bold;">float64</span>(minright+maxleft) / 2.0
-                }
-        }
+			return float64(minright+maxleft) / 2.0
+		}
+	}
 
-        <span style="color: #989848;">return</span> 0.0
+	return 0.0
 }
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">main</span>() {
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, <span style="color: #424242; font-weight: bold;">findMedianSortedArrays</span>([]<span style="color: #0287c8; font-weight: bold;">int</span>{1, 2, 3, 5, 6, 7, 8}, []<span style="color: #0287c8; font-weight: bold;">int</span>{3, 4})) <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
+func main() {
+	fmt.Printf("%+v\n", findMedianSortedArrays([]int{1, 2, 3, 5, 6, 7, 8}, []int{3, 4})) // output for debug
 }
-
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org45fee04" class="outline-3">
-<h3 id="org45fee04"><span class="section-number-3">0.5</span> Longest Palindromic Substring</h3>
+<div id="outline-container-sec-0-5" class="outline-3">
+<h3 id="sec-0-5"><span class="section-number-3">0.5</span> Longest Palindromic Substring</h3>
 <div class="outline-text-3" id="text-0-5">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #989848;">package</span> main
 
-<span style="color: #989848;">import</span> (
-        <span style="color: #b85c57;">"fmt"</span>
+<pre class="src src-go">package main
+
+import (
+	"fmt"
 )
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">longestPalindrome</span>(s <span style="color: #0287c8; font-weight: bold;">string</span>) <span style="color: #0287c8; font-weight: bold;">string</span> {
-        <span style="color: #989848;">if</span> <span style="color: #424242; font-weight: bold;">len</span>(s) == 0 {
-                <span style="color: #989848;">return</span> <span style="color: #b85c57;">""</span>
-        }
-        m := [1000][1000]<span style="color: #0287c8; font-weight: bold;">bool</span>{}
-        <span style="color: #989848;">for</span> i := 0; i &lt; <span style="color: #424242; font-weight: bold;">len</span>(s); i++ {
-                m[i][i] = <span style="color: #989848; font-weight: bold;">true</span>
-        }
-        <span style="color: #989848;">for</span> l := 1; l &lt; <span style="color: #424242; font-weight: bold;">len</span>(s); l++ {
-                <span style="color: #989848;">for</span> i := 0; i+l &lt; <span style="color: #424242; font-weight: bold;">len</span>(s); i++ {
+func longestPalindrome(s string) string {
+	if len(s) == 0 {
+		return ""
+	}
+	m := [1000][1000]bool{}
+	for i := 0; i &lt; len(s); i++ {
+		m[i][i] = true
+	}
+	for l := 1; l &lt; len(s); l++ {
+		for i := 0; i+l &lt; len(s); i++ {
 
-                        <span style="color: #989848;">if</span> i+1 &lt;= i+l-1 &amp;&amp; m[i+1][i+l-1] &amp;&amp; s[i] == s[i+l] {
-                                m[i][i+l] = <span style="color: #989848; font-weight: bold;">true</span>
-                        } <span style="color: #989848;">else</span> <span style="color: #989848;">if</span> l == 1 &amp;&amp; s[i] == s[i+l] {
-                                m[i][i+l] = <span style="color: #989848; font-weight: bold;">true</span>
-                        }
-                }
-        }
+			if i+1 &lt;= i+l-1 &amp;&amp; m[i+1][i+l-1] &amp;&amp; s[i] == s[i+l] {
+				m[i][i+l] = true
+			} else if l == 1 &amp;&amp; s[i] == s[i+l] {
+				m[i][i+l] = true
+			}
+		}
+	}
 
-        max := 1
-        maxs := <span style="color: #424242; font-weight: bold;">string</span>([]<span style="color: #424242; font-weight: bold;">byte</span>(s)[0:1])
-        <span style="color: #989848;">for</span> i := 0; i &lt; <span style="color: #424242; font-weight: bold;">len</span>(s); i++ {
-                <span style="color: #989848;">for</span> j := i; j &lt; <span style="color: #424242; font-weight: bold;">len</span>(s); j++ {
-                        <span style="color: #989848;">if</span> m[i][j] &amp;&amp; j-i+1 &gt; max {
-                                max = j - i + 1
-                                maxs = <span style="color: #424242; font-weight: bold;">string</span>([]<span style="color: #424242; font-weight: bold;">byte</span>(s)[i : j+1])
-                        }
-                }
-        }
-        <span style="color: #989848;">return</span> maxs
+	max := 1
+	maxs := string([]byte(s)[0:1])
+	for i := 0; i &lt; len(s); i++ {
+		for j := i; j &lt; len(s); j++ {
+			if m[i][j] &amp;&amp; j-i+1 &gt; max {
+				max = j - i + 1
+				maxs = string([]byte(s)[i : j+1])
+			}
+		}
+	}
+	return maxs
 }
 
-<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">main</span>() {
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, <span style="color: #424242; font-weight: bold;">longestPalindrome</span>(<span style="color: #b85c57;">"babad"</span>)) <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, <span style="color: #424242; font-weight: bold;">longestPalindrome</span>(<span style="color: #b85c57;">"cbbd"</span>))  <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
-        fmt.<span style="color: #424242; font-weight: bold;">Printf</span>(<span style="color: #b85c57;">"%+v\n"</span>, <span style="color: #424242; font-weight: bold;">longestPalindrome</span>(<span style="color: #b85c57;">""</span>))      <span style="color: #40883f;">// </span><span style="color: #40883f;">output for debug</span>
+func main() {
+	fmt.Printf("%+v\n", longestPalindrome("babad")) // output for debug
+	fmt.Printf("%+v\n", longestPalindrome("cbbd"))  // output for debug
+	fmt.Printf("%+v\n", longestPalindrome(""))      // output for debug
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgfeae17f" class="outline-3">
-<h3 id="orgfeae17f"><span class="section-number-3">0.6</span> ZigZag Conversion</h3>
+<div id="outline-container-sec-0-6" class="outline-3">
+<h3 id="sec-0-6"><span class="section-number-3">0.6</span> ZigZag Conversion</h3>
 <div class="outline-text-3" id="text-0-6">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">convert</span>(s <span style="color: #0287c8; font-weight: bold;">string</span>, numRows <span style="color: #0287c8; font-weight: bold;">int</span>) <span style="color: #0287c8; font-weight: bold;">string</span> {
-        <span style="color: #989848;">if</span> numRows == 1 {
-                <span style="color: #989848;">return</span> s
-        }
-        lines := <span style="color: #424242; font-weight: bold;">make</span>([][]<span style="color: #0287c8; font-weight: bold;">byte</span>, numRows)
-        i := 0
-        add := <span style="color: #989848; font-weight: bold;">true</span>
-        <span style="color: #989848;">for</span> _, c := <span style="color: #989848;">range</span> []<span style="color: #424242; font-weight: bold;">byte</span>(s) {
-                lines[i] = <span style="color: #424242; font-weight: bold;">append</span>(lines[i], c)
-                <span style="color: #989848;">if</span> add {
-                        <span style="color: #989848;">if</span> i+1 &gt;= numRows {
-                                i--
-                                add = <span style="color: #989848; font-weight: bold;">false</span>
-                        } <span style="color: #989848;">else</span> {
-                                i++
-                        }
-                } <span style="color: #989848;">else</span> {
-                        <span style="color: #989848;">if</span> i-1 &lt; 0 {
-                                i++
-                                add = <span style="color: #989848; font-weight: bold;">true</span>
-                        } <span style="color: #989848;">else</span> {
-                                i--
-                        }
-                }
-        }
 
-        <span style="color: #989848;">for</span> i := 1; i &lt; numRows; i++ {
-                lines[0] = <span style="color: #424242; font-weight: bold;">append</span>(lines[0], lines[i]...)
-        }
-        <span style="color: #989848;">return</span> <span style="color: #424242; font-weight: bold;">string</span>(lines[0])
+<pre class="src src-go">func convert(s string, numRows int) string {
+	if numRows == 1 {
+		return s
+	}
+	lines := make([][]byte, numRows)
+	i := 0
+	add := true
+	for _, c := range []byte(s) {
+		lines[i] = append(lines[i], c)
+		if add {
+			if i+1 &gt;= numRows {
+				i--
+				add = false
+			} else {
+				i++
+			}
+		} else {
+			if i-1 &lt; 0 {
+				i++
+				add = true
+			} else {
+				i--
+			}
+		}
+	}
+
+	for i := 1; i &lt; numRows; i++ {
+		lines[0] = append(lines[0], lines[i]...)
+	}
+	return string(lines[0])
 }
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org069f6ae" class="outline-3">
-<h3 id="org069f6ae"><span class="section-number-3">0.7</span> Reverse Integer</h3>
+<div id="outline-container-sec-0-7" class="outline-3">
+<h3 id="sec-0-7"><span class="section-number-3">0.7</span> Reverse Integer</h3>
 <div class="outline-text-3" id="text-0-7">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">reverse</span>(x <span style="color: #0287c8; font-weight: bold;">int</span>) <span style="color: #0287c8; font-weight: bold;">int</span> {
-        max := <span style="color: #424242; font-weight: bold;">int</span>(math.<span style="color: #424242; font-weight: bold;">Pow</span>(2.0, 31.0)) - 1
-        min := <span style="color: #424242; font-weight: bold;">int</span>(math.<span style="color: #424242; font-weight: bold;">Pow</span>(-2.0, 31.0))
-        r := 0
-        <span style="color: #989848;">for</span> x != 0 {
-                r = 10*r + (x % 10)
-                <span style="color: #989848;">if</span> r &gt; max || r &lt; min {
-                        <span style="color: #989848;">return</span> 0
-                }
-                x /= 10
-        }
-        <span style="color: #989848;">return</span> r
+
+<pre class="src src-go">func reverse(x int) int {
+	max := int(math.Pow(2.0, 31.0)) - 1
+	min := int(math.Pow(-2.0, 31.0))
+	r := 0
+	for x != 0 {
+		r = 10*r + (x % 10)
+		if r &gt; max || r &lt; min {
+			return 0
+		}
+		x /= 10
+	}
+	return r
 }
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-org363f8f3" class="outline-3">
-<h3 id="org363f8f3"><span class="section-number-3">0.8</span> String to Integer (atoi)</h3>
+<div id="outline-container-sec-0-8" class="outline-3">
+<h3 id="sec-0-8"><span class="section-number-3">0.8</span> String to Integer (atoi)</h3>
 <div class="outline-text-3" id="text-0-8">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">myAtoi</span>(str <span style="color: #0287c8; font-weight: bold;">string</span>) <span style="color: #0287c8; font-weight: bold;">int</span> {
-        <span style="color: #989848;">if</span> str == <span style="color: #b85c57;">""</span> {
-                <span style="color: #989848;">return</span> 0
-        }
-        max := <span style="color: #424242; font-weight: bold;">int</span>(math.<span style="color: #424242; font-weight: bold;">Pow</span>(2.0, 31)) - 1
-        min := <span style="color: #424242; font-weight: bold;">int</span>(math.<span style="color: #424242; font-weight: bold;">Pow</span>(-2.0, 31))
-        i := 0
-        <span style="color: #989848;">for</span> ; i &lt; <span style="color: #424242; font-weight: bold;">len</span>(str); i++ {
-                <span style="color: #989848;">if</span> str[i] != <span style="color: #b85c57;">' '</span> {
-                        <span style="color: #989848;">break</span>
-                }
-        }
-        <span style="color: #989848;">if</span> i == <span style="color: #424242; font-weight: bold;">len</span>(str) {
-                <span style="color: #989848;">return</span> 0
-        }
-        negative := <span style="color: #989848; font-weight: bold;">false</span>
-        <span style="color: #989848;">if</span> str[i] &gt;= <span style="color: #b85c57;">'0'</span> &amp;&amp; str[i] &lt;= <span style="color: #b85c57;">'9'</span> {
-        } <span style="color: #989848;">else</span> <span style="color: #989848;">if</span> str[i] == <span style="color: #b85c57;">'+'</span> {
-                i++
-        } <span style="color: #989848;">else</span> <span style="color: #989848;">if</span> str[i] == <span style="color: #b85c57;">'-'</span> {
-                negative = <span style="color: #989848; font-weight: bold;">true</span>
-                i++
-        } <span style="color: #989848;">else</span> {
-                <span style="color: #989848;">return</span> 0
-        }
-        flag := <span style="color: #989848; font-weight: bold;">false</span>
-        r := 0
-        <span style="color: #989848;">for</span> ; i &lt; <span style="color: #424242; font-weight: bold;">len</span>(str); i++ {
-                <span style="color: #989848;">if</span> str[i] &gt;= <span style="color: #b85c57;">'0'</span> &amp;&amp; str[i] &lt;= <span style="color: #b85c57;">'9'</span> {
-                        flag = <span style="color: #989848; font-weight: bold;">true</span>
-                        r = 10*r + (<span style="color: #424242; font-weight: bold;">int</span>(str[i]) - 48)
-                        <span style="color: #989848;">if</span> r &gt; max &amp;&amp; !negative {
-                                <span style="color: #989848;">return</span> max
-                        } <span style="color: #989848;">else</span> <span style="color: #989848;">if</span> (-r) &lt; min &amp;&amp; negative {
-                                <span style="color: #989848;">return</span> min
-                        }
-                } <span style="color: #989848;">else</span> <span style="color: #989848;">if</span> !flag {
-                        <span style="color: #989848;">return</span> 0
-                } <span style="color: #989848;">else</span> {
-                        <span style="color: #989848;">break</span>
-                }
-        }
-        <span style="color: #989848;">if</span> negative {
-                <span style="color: #989848;">return</span> (-r)
-        }
-        <span style="color: #989848;">return</span> r
+
+<pre class="src src-go">func myAtoi(str string) int {
+	if str == "" {
+		return 0
+	}
+	max := int(math.Pow(2.0, 31)) - 1
+	min := int(math.Pow(-2.0, 31))
+	i := 0
+	for ; i &lt; len(str); i++ {
+		if str[i] != ' ' {
+			break
+		}
+	}
+	if i == len(str) {
+		return 0
+	}
+	negative := false
+	if str[i] &gt;= '0' &amp;&amp; str[i] &lt;= '9' {
+	} else if str[i] == '+' {
+		i++
+	} else if str[i] == '-' {
+		negative = true
+		i++
+	} else {
+		return 0
+	}
+	flag := false
+	r := 0
+	for ; i &lt; len(str); i++ {
+		if str[i] &gt;= '0' &amp;&amp; str[i] &lt;= '9' {
+			flag = true
+			r = 10*r + (int(str[i]) - 48)
+			if r &gt; max &amp;&amp; !negative {
+				return max
+			} else if (-r) &lt; min &amp;&amp; negative {
+				return min
+			}
+		} else if !flag {
+			return 0
+		} else {
+			break
+		}
+	}
+	if negative {
+		return (-r)
+	}
+	return r
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-9" class="outline-3">
+<h3 id="sec-0-9"><span class="section-number-3">0.9</span> Palindrome Number</h3>
+<div class="outline-text-3" id="text-0-9">
+<div class="org-src-container">
+
+<pre class="src src-go">func isPalindrome(x int) bool {
+       if x &lt; 0 {
+	       return false
+       }
+       tmp := x
+       y := 0
+       for x &gt; 0 {
+	       y = y*10 + x%10
+	       x = x / 10
+       }
+       return tmp == y
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-10" class="outline-3">
+<h3 id="sec-0-10"><span class="section-number-3">0.10</span> Regular Expression Matching</h3>
+<div class="outline-text-3" id="text-0-10">
+<div class="org-src-container">
+
+<pre class="src src-go">package main
+
+import (
+	"fmt"
+)
+
+func isMatch(s string, p string) bool {
+	if s == "" &amp;&amp; p == "" {
+		return true
+	}
+	dp := map[int]map[int]bool{}
+	dp[-1] = map[int]bool{-1: true}
+	for i := 0; i &lt; len(p); i++ {
+		dp[i] = map[int]bool{}
+		for j := -1; j &lt; len(s); j++ {
+			if p[i] == '.' {
+				if j &gt; -1 &amp;&amp; dp[i-1][j-1] {
+					dp[i][j] = true
+				} // else if i == 0 &amp;&amp; j &gt;= 0 &amp;&amp; [i] {
+				//      dp[i][j] = true
+				// }
+				// else {
+				//      dp[i][j] = false
+				// }
+			} else if p[i] == '*' {
+				if i == 0 { // illegal
+					return false
+				}
+				if p[i-1] == '.' &amp;&amp; (len(dp[i-2]) &gt; 0) {
+					mink := 99999
+					for k := range dp[i-2] {
+						if k &lt; mink {
+							mink = k
+						}
+					}
+					if j &gt;= mink {
+						dp[i][j] = true
+					}
+				} else if dp[i-1][j] || dp[i-2][j] {
+					dp[i][j] = true
+				} else if j &gt;= 0 &amp;&amp; p[i-1] == s[j] &amp;&amp; (dp[i-1][j-1] || dp[i][j-1]) {
+					dp[i][j] = true
+				}
+			} else {
+				if j == -1 {
+					continue
+				}
+				if j &gt;= 0 {
+					if p[i] == s[j] &amp;&amp; dp[i-1][j-1] {
+						dp[i][j] = true
+					}
+				}
+			}
+		}
+	}
+
+	return dp[len(p)-1][len(s)-1]
+}
+
+func main() {
+	fmt.Printf("%+v\n", isMatch("baaac", ".*b.*c")) // Output for debug
 }
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org1acfe1a" class="outline-2">
-<h2 id="org1acfe1a"><span class="section-number-2">1</span> Bear in mind</h2>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Bear in mind</h2>
 <div class="outline-text-2" id="text-1">
 <ul class="org-ul">
-<li>检查类似 max, isXXX, flag 的变量是否更新</li>
-<li>检查特殊输入,如空字符串</li>
+<li>检查类似 max, isXXX, flag 的变量是否更新
+</li>
+<li>检查特殊输入,如空字符串
+</li>
 </ul>
 </div>
 </div>

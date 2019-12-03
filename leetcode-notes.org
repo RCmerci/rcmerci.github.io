@@ -360,6 +360,91 @@ func myAtoi(str string) int {
 	return r
 }
 #+END_SRC
+** Palindrome Number
+#+BEGIN_SRC go
+  func isPalindrome(x int) bool {
+         if x < 0 {
+                 return false
+         }
+         tmp := x
+         y := 0
+         for x > 0 {
+                 y = y*10 + x%10
+                 x = x / 10
+         }
+         return tmp == y
+  }
+
+#+END_SRC
+** Regular Expression Matching
+#+BEGIN_SRC go
+package main
+
+import (
+	"fmt"
+)
+
+func isMatch(s string, p string) bool {
+	if s == "" && p == "" {
+		return true
+	}
+	dp := map[int]map[int]bool{}
+	dp[-1] = map[int]bool{-1: true}
+	for i := 0; i < len(p); i++ {
+		dp[i] = map[int]bool{}
+		for j := -1; j < len(s); j++ {
+			if p[i] == '.' {
+				if j > -1 && dp[i-1][j-1] {
+					dp[i][j] = true
+				} // else if i == 0 && j >= 0 && [i] {
+				// 	dp[i][j] = true
+				// }
+				// else {
+				// 	dp[i][j] = false
+				// }
+			} else if p[i] == '*' {
+				if i == 0 { // illegal
+					return false
+				}
+				if p[i-1] == '.' && (len(dp[i-2]) > 0) {
+					mink := 99999
+					for k := range dp[i-2] {
+						if k < mink {
+							mink = k
+						}
+					}
+					if j >= mink {
+						dp[i][j] = true
+					}
+				} else if dp[i-1][j] || dp[i-2][j] {
+					dp[i][j] = true
+				} else if j >= 0 && p[i-1] == s[j] && (dp[i-1][j-1] || dp[i][j-1]) {
+					dp[i][j] = true
+				}
+			} else {
+				if j == -1 {
+					continue
+				}
+				if j >= 0 {
+					if p[i] == s[j] && dp[i-1][j-1] {
+						dp[i][j] = true
+					}
+				}
+			}
+		}
+	}
+
+	return dp[len(p)-1][len(s)-1]
+}
+
+func main() {
+	fmt.Printf("%+v\n", isMatch("baaac", ".*b.*c")) // Output for debug
+}
+
+#+END_SRC
+
+#+RESULTS:
+: true
 
 * Bear in mind
   - 检查类似 max, isXXX, flag 的变量是否更新
