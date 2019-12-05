@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>leetcode notes</title>
-<!-- 2019-12-03 二 21:29 -->
+<!-- 2019-12-06 五 00:05 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="root" />
@@ -139,7 +139,7 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="preamble" class="status">
-<p class="date">Updated: 2019-12-03 二 21:29</p>
+<p class="date">Updated: 2019-12-06 五 00:05</p>
 </div>
 <div id="content">
 <h1 class="title">leetcode notes</h1>
@@ -157,6 +157,11 @@ for the JavaScript code in this tag.
 <li><a href="#sec-0-8">0.8. String to Integer (atoi)</a></li>
 <li><a href="#sec-0-9">0.9. Palindrome Number</a></li>
 <li><a href="#sec-0-10">0.10. Regular Expression Matching</a></li>
+<li><a href="#sec-0-11">0.11. Container With Most Water</a></li>
+<li><a href="#sec-0-12">0.12. Integer to Roman</a></li>
+<li><a href="#sec-0-13">0.13. Roman to Integer</a></li>
+<li><a href="#sec-0-14">0.14. Longest Common Prefix</a></li>
+<li><a href="#sec-0-15">0.15. 3Sum</a></li>
 </ul>
 </li>
 <li><a href="#sec-1">1. Bear in mind</a></div>
@@ -634,6 +639,266 @@ func isMatch(s string, p string) bool {
 
 func main() {
 	fmt.Printf("%+v\n", isMatch("baaac", ".*b.*c")) // Output for debug
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-11" class="outline-3">
+<h3 id="sec-0-11"><span class="section-number-3">0.11</span> Container With Most Water</h3>
+<div class="outline-text-3" id="text-0-11">
+<div class="org-src-container">
+
+<pre class="src src-go">package main
+
+import (
+	"fmt"
+)
+
+func maxArea(height []int) int {
+	i := 0
+	j := len(height) - 1
+	max := 0
+	for i &lt; j {
+		if height[i] &gt; height[j] {
+			if height[j]*(j-i) &gt; max {
+				max = height[j] * (j - i)
+			}
+			j--
+		} else {
+			if height[i]*(j-i) &gt; max {
+				max = height[i] * (j - i)
+			}
+			i++
+		}
+
+	}
+
+	return max
+}
+
+func main() {
+	fmt.Printf("%+v\n", maxArea([]int{1, 3, 2, 5, 25, 24, 5})) // output for debug
+
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-12" class="outline-3">
+<h3 id="sec-0-12"><span class="section-number-3">0.12</span> Integer to Roman</h3>
+<div class="outline-text-3" id="text-0-12">
+<div class="org-src-container">
+
+<pre class="src src-go">package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func intToRoman(num int) string {
+	a := num / 1000
+	num = num % 1000
+	b := num / 900
+	num = num % 900
+	c := num / 500
+	num = num % 500
+	d := num / 400
+	num = num % 400
+	e := num / 100
+	num = num % 100
+	f := num / 90
+	num = num % 90
+	g := num / 50
+	num = num % 50
+	h := num / 40
+	num = num % 40
+	i := num / 10
+	num = num % 10
+	j := num / 9
+	num = num % 9
+	k := num / 5
+	num = num % 5
+	l := num / 4
+	num = num % 4
+	m := num
+
+	return strings.Repeat("M", a) + strings.Repeat("CM", b) + strings.Repeat("D", c) + strings.Repeat("CD", d) + strings.Repeat("C", e) + strings.Repeat("XC", f) + strings.Repeat("L", g) + strings.Repeat("XL", h) + strings.Repeat("X", i) + strings.Repeat("IX", j) + strings.Repeat("V", k) + strings.Repeat("IV", l) + strings.Repeat("I", m)
+}
+
+func main() {
+	fmt.Printf("%+v\n", intToRoman(58)) // output for debug
+
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-13" class="outline-3">
+<h3 id="sec-0-13"><span class="section-number-3">0.13</span> Roman to Integer</h3>
+<div class="outline-text-3" id="text-0-13">
+<div class="org-src-container">
+
+<pre class="src src-go">package main
+
+import (
+	"fmt"
+)
+
+func romanToInt(s string) int {
+	r := 0
+	for i := 0; i &lt; len(s); i++ {
+		switch s[i] {
+		case 'I':
+			if i+1 &lt; len(s) {
+				if s[i+1] == 'V' {
+					r += 4
+					i++
+					continue
+				} else if s[i+1] == 'X' {
+					r += 9
+					i++
+					continue
+				}
+			}
+			r += 1
+		case 'X':
+			if i+1 &lt; len(s) {
+				if s[i+1] == 'L' {
+					r += 40
+					i++
+					continue
+
+				} else if s[i+1] == 'C' {
+					r += 90
+					i++
+					continue
+				}
+			}
+			r += 10
+		case 'C':
+			if i+1 &lt; len(s) {
+				if s[i+1] == 'D' {
+					r += 400
+					i++
+					continue
+				} else if s[i+1] == 'M' {
+					r += 900
+					i++
+					continue
+				}
+			}
+			r += 100
+		case 'V':
+			r += 5
+		case 'L':
+			r += 50
+		case 'D':
+			r += 500
+		case 'M':
+			r += 1000
+		}
+	}
+	return r
+}
+func main() {
+	fmt.Printf("%+v\n", romanToInt("MCMXCIV")) // output for debug
+
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-14" class="outline-3">
+<h3 id="sec-0-14"><span class="section-number-3">0.14</span> Longest Common Prefix</h3>
+<div class="outline-text-3" id="text-0-14">
+<div class="org-src-container">
+
+<pre class="src src-go">package main
+
+import (
+	"fmt"
+)
+
+func longestCommonPrefix(strs []string) string {
+	if len(strs) == 1 {
+		return strs[0]
+	} else if len(strs) == 0 {
+		return ""
+	}
+	j := 0
+	finish := false
+	for j &lt; len(strs[0]) {
+		for i := 1; i &lt; len(strs); i++ {
+			if j &gt;= len(strs[i]) || strs[0][j] != strs[i][j] {
+				finish = true
+				break
+			}
+		}
+		if finish {
+			break
+		}
+		j++
+
+	}
+	return strs[0][:j]
+}
+
+func main() {
+	fmt.Printf("%+v\n", longestCommonPrefix([]string{"flower", "flow", "flowddd"})) // output for debug
+
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-15" class="outline-3">
+<h3 id="sec-0-15"><span class="section-number-3">0.15</span> 3Sum</h3>
+<div class="outline-text-3" id="text-0-15">
+<div class="org-src-container">
+
+<pre class="src src-go">package main
+
+import (
+	"fmt"
+	"sort"
+)
+
+func threeSum(nums []int) [][]int {
+	sort.Ints(nums)
+	r := [][]int{}
+	for i := 0; i &lt; len(nums)-2; i++ {
+		if i-1 &gt;= 0 &amp;&amp; nums[i] == nums[i-1] {
+			continue
+		}
+		j := i + 1
+		k := len(nums) - 1
+		lastj := nums[j] + 1
+		lastk := nums[k] + 1
+		last := false
+		for j &lt; k {
+			l := nums[j] + nums[k] + nums[i]
+			if l == 0 &amp;&amp; (!last || nums[j] != lastj &amp;&amp; nums[k] != lastk) {
+				r = append(r, []int{nums[i], nums[j], nums[k]})
+				lastj = nums[j]
+				lastk = nums[k]
+				last = true
+				j++
+			} else if l &lt; 0 {
+				j++
+			} else {
+				k--
+			}
+		}
+	}
+	return r
+
+}
+func main() {
+
+	fmt.Printf("%+v\n", threeSum([]int{1, -1, -1, 0})) // output for debug
+
 }
 </pre>
 </div>
