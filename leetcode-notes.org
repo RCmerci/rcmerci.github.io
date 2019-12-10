@@ -693,7 +693,162 @@ func main() {
 
 #+RESULTS:
 : [[-1 0 1]]
+** 3Sum Closest
+#+BEGIN_SRC go
+  func threeSumClosest(nums []int, target int) int {
+          sort.Ints(nums)
+          closest := nums[0] + nums[1] + nums[2]
+          for i := 0; i < len(nums)-2; i++ {
+                  j := i + 1
+                  k := len(nums) - 1
+                  for j < k {
+                          diff := nums[i] + nums[j] + nums[k] - target
+                          if math.Abs(float64(diff)) < math.Abs(float64(closest-target)) {
+                                  closest = nums[i] + nums[j] + nums[k]
+                                  if closest == target {
+                                          return closest
+                                  }
+                          }
+                          if diff < 0 {
+                                  j++
+                          } else {
+                                  k--
+                          }
+                  }
+          }
+          return closest
+  }
 
+#+END_SRC
+** Letter Combinations of a Phone Number
+#+BEGIN_SRC go
+var m = map[byte][]byte{
+	'2': []byte("abc"),
+	'3': []byte("def"),
+	'4': []byte("ghi"),
+	'5': []byte("jkl"),
+	'6': []byte("mno"),
+	'7': []byte("pqrs"),
+	'8': []byte("tuv"),
+	'9': []byte("wxyz"),
+}
+
+func backtrack(combination []byte, next []byte, r *([]string)) {
+	if len(next) == 0 {
+		*r = append(*r, string(combination))
+		return
+	}
+	nextnum := next[0]
+	next = next[1:]
+	for _, i := range m[nextnum] {
+		backtrack(append(combination, i), next, r)
+	}
+	return
+}
+
+func letterCombinations(digits string) []string {
+	if len(digits) == 0 {
+		return []string{}
+	}
+	r := []string{}
+	backtrack([]byte{}, []byte(digits), &r)
+	return r
+}
+#+END_SRC
+** 4Sum
+#+BEGIN_SRC go
+func fourSum(nums []int, target int) [][]int {
+	r := [][]int{}
+	sort.Ints(nums)
+	for i := 0; i < len(nums)-3; i++ {
+		for j := i + 1; j < len(nums)-2; j++ {
+			k := j + 1
+			l := len(nums) - 1
+			for k < l {
+				sum := nums[i] + nums[j] + nums[k] + nums[l]
+				if sum == target {
+					r = append(r, []int{nums[i], nums[j], nums[k], nums[l]})
+				}
+				if sum < target {
+					for k+1 < l && nums[k] == nums[k+1] {
+						k++
+					}
+					k++
+				} else {
+					for l-1 > k && nums[l] == nums[l-1] {
+						l--
+					}
+					l--
+				}
+			}
+			for j+1 < len(nums)-2 && nums[j] == nums[j+1] {
+				j++
+			}
+		}
+		for i+1 < len(nums)-3 && nums[i] == nums[i+1] {
+			i++
+		}
+	}
+	return r
+}
+#+END_SRC
+** Remove Nth Node From End of List
+#+BEGIN_SRC go
+func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	orig := &ListNode{}
+	orig.Next = head
+	prev := orig
+	head = orig
+	for i := 0; i < n; i++ {
+		head = head.Next
+	}
+	for head.Next != nil {
+		prev = prev.Next
+		head = head.Next
+	}
+	prev.Next = prev.Next.Next
+	return orig.Next
+}
+#+END_SRC
+** Valid Parentheses
+#+BEGIN_SRC go
+func isValid(s string) bool {
+	stack := []byte{}
+	for _, i := range []byte(s) {
+		if i == '(' || i == '{' || i == '[' {
+			stack = append(stack, i)
+		} else if len(stack) == 0 {
+			return false
+		} else {
+			last := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			if !(i == ')' && last == '(' || i == '}' && last == '{' || i == ']' && last == '[') {
+				return false
+			}
+		}
+	}
+	return len(stack) == 0
+}
+#+END_SRC
+** Merge Two Sorted Lists
+#+BEGIN_SRC go
+func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
+	if l1 == nil {
+		return l2
+	}
+	if l2 == nil {
+		return l1
+	}
+	if l1.Val < l2.Val {
+		l1.Next = mergeTwoLists(l1.Next, l2)
+		return l1
+	} else {
+		l2.Next = mergeTwoLists(l1, l2.Next)
+		return l2
+	}
+
+}
+#+END_SRC
 * Bear in mind
   - 检查类似 max, isXXX, flag 的变量是否更新
   - 检查特殊输入,如空字符串

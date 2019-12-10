@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>leetcode notes</title>
-<!-- 2019-12-06 五 00:05 -->
+<!-- 2019-12-10 二 23:22 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="root" />
@@ -139,7 +139,7 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="preamble" class="status">
-<p class="date">Updated: 2019-12-06 五 00:05</p>
+<p class="date">Updated: 2019-12-10 二 23:22</p>
 </div>
 <div id="content">
 <h1 class="title">leetcode notes</h1>
@@ -162,6 +162,12 @@ for the JavaScript code in this tag.
 <li><a href="#sec-0-13">0.13. Roman to Integer</a></li>
 <li><a href="#sec-0-14">0.14. Longest Common Prefix</a></li>
 <li><a href="#sec-0-15">0.15. 3Sum</a></li>
+<li><a href="#sec-0-16">0.16. 3Sum Closest</a></li>
+<li><a href="#sec-0-17">0.17. Letter Combinations of a Phone Number</a></li>
+<li><a href="#sec-0-18">0.18. 4Sum</a></li>
+<li><a href="#sec-0-19">0.19. Remove Nth Node From End of List</a></li>
+<li><a href="#sec-0-20">0.20. Valid Parentheses</a></li>
+<li><a href="#sec-0-21">0.21. Merge Two Sorted Lists</a></li>
 </ul>
 </li>
 <li><a href="#sec-1">1. Bear in mind</a></div>
@@ -904,7 +910,197 @@ func main() {
 </div>
 </div>
 </div>
+<div id="outline-container-sec-0-16" class="outline-3">
+<h3 id="sec-0-16"><span class="section-number-3">0.16</span> 3Sum Closest</h3>
+<div class="outline-text-3" id="text-0-16">
+<div class="org-src-container">
 
+<pre class="src src-go">func threeSumClosest(nums []int, target int) int {
+	sort.Ints(nums)
+	closest := nums[0] + nums[1] + nums[2]
+	for i := 0; i &lt; len(nums)-2; i++ {
+		j := i + 1
+		k := len(nums) - 1
+		for j &lt; k {
+			diff := nums[i] + nums[j] + nums[k] - target
+			if math.Abs(float64(diff)) &lt; math.Abs(float64(closest-target)) {
+				closest = nums[i] + nums[j] + nums[k]
+				if closest == target {
+					return closest
+				}
+			}
+			if diff &lt; 0 {
+				j++
+			} else {
+				k--
+			}
+		}
+	}
+	return closest
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-17" class="outline-3">
+<h3 id="sec-0-17"><span class="section-number-3">0.17</span> Letter Combinations of a Phone Number</h3>
+<div class="outline-text-3" id="text-0-17">
+<div class="org-src-container">
+
+<pre class="src src-go">var m = map[byte][]byte{
+	'2': []byte("abc"),
+	'3': []byte("def"),
+	'4': []byte("ghi"),
+	'5': []byte("jkl"),
+	'6': []byte("mno"),
+	'7': []byte("pqrs"),
+	'8': []byte("tuv"),
+	'9': []byte("wxyz"),
+}
+
+func backtrack(combination []byte, next []byte, r *([]string)) {
+	if len(next) == 0 {
+		*r = append(*r, string(combination))
+		return
+	}
+	nextnum := next[0]
+	next = next[1:]
+	for _, i := range m[nextnum] {
+		backtrack(append(combination, i), next, r)
+	}
+	return
+}
+
+func letterCombinations(digits string) []string {
+	if len(digits) == 0 {
+		return []string{}
+	}
+	r := []string{}
+	backtrack([]byte{}, []byte(digits), &amp;r)
+	return r
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-18" class="outline-3">
+<h3 id="sec-0-18"><span class="section-number-3">0.18</span> 4Sum</h3>
+<div class="outline-text-3" id="text-0-18">
+<div class="org-src-container">
+
+<pre class="src src-go">func fourSum(nums []int, target int) [][]int {
+	r := [][]int{}
+	sort.Ints(nums)
+	for i := 0; i &lt; len(nums)-3; i++ {
+		for j := i + 1; j &lt; len(nums)-2; j++ {
+			k := j + 1
+			l := len(nums) - 1
+			for k &lt; l {
+				sum := nums[i] + nums[j] + nums[k] + nums[l]
+				if sum == target {
+					r = append(r, []int{nums[i], nums[j], nums[k], nums[l]})
+				}
+				if sum &lt; target {
+					for k+1 &lt; l &amp;&amp; nums[k] == nums[k+1] {
+						k++
+					}
+					k++
+				} else {
+					for l-1 &gt; k &amp;&amp; nums[l] == nums[l-1] {
+						l--
+					}
+					l--
+				}
+			}
+			for j+1 &lt; len(nums)-2 &amp;&amp; nums[j] == nums[j+1] {
+				j++
+			}
+		}
+		for i+1 &lt; len(nums)-3 &amp;&amp; nums[i] == nums[i+1] {
+			i++
+		}
+	}
+	return r
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-19" class="outline-3">
+<h3 id="sec-0-19"><span class="section-number-3">0.19</span> Remove Nth Node From End of List</h3>
+<div class="outline-text-3" id="text-0-19">
+<div class="org-src-container">
+
+<pre class="src src-go">func removeNthFromEnd(head *ListNode, n int) *ListNode {
+	orig := &amp;ListNode{}
+	orig.Next = head
+	prev := orig
+	head = orig
+	for i := 0; i &lt; n; i++ {
+		head = head.Next
+	}
+	for head.Next != nil {
+		prev = prev.Next
+		head = head.Next
+	}
+	prev.Next = prev.Next.Next
+	return orig.Next
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-20" class="outline-3">
+<h3 id="sec-0-20"><span class="section-number-3">0.20</span> Valid Parentheses</h3>
+<div class="outline-text-3" id="text-0-20">
+<div class="org-src-container">
+
+<pre class="src src-go">func isValid(s string) bool {
+	stack := []byte{}
+	for _, i := range []byte(s) {
+		if i == '(' || i == '{' || i == '[' {
+			stack = append(stack, i)
+		} else if len(stack) == 0 {
+			return false
+		} else {
+			last := stack[len(stack)-1]
+			stack = stack[:len(stack)-1]
+			if !(i == ')' &amp;&amp; last == '(' || i == '}' &amp;&amp; last == '{' || i == ']' &amp;&amp; last == '[') {
+				return false
+			}
+		}
+	}
+	return len(stack) == 0
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-21" class="outline-3">
+<h3 id="sec-0-21"><span class="section-number-3">0.21</span> Merge Two Sorted Lists</h3>
+<div class="outline-text-3" id="text-0-21">
+<div class="org-src-container">
+
+<pre class="src src-go">func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
+	if l1 == nil {
+		return l2
+	}
+	if l2 == nil {
+		return l1
+	}
+	if l1.Val &lt; l2.Val {
+		l1.Next = mergeTwoLists(l1.Next, l2)
+		return l1
+	} else {
+		l2.Next = mergeTwoLists(l1, l2.Next)
+		return l2
+	}
+
+}
+</pre>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Bear in mind</h2>
 <div class="outline-text-2" id="text-1">
