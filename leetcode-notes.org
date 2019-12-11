@@ -849,6 +849,52 @@ func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
 
 }
 #+END_SRC
+** Generate Parentheses
+#+BEGIN_SRC go
+func generateParenthesis(n int) []string {
+	res := []string{}
+	aux(0, 0, n, "", &res)
+	return res
+}
+
+func aux(l, r, n int, curr string, res *[]string) {
+	if l == n && r == n {
+		*res = append(*res, curr)
+		return
+	}
+	if l < n {
+		aux(l+1, r, n, curr+"(", res)
+	}
+	if r < l {
+		aux(l, r+1, n, curr+")", res)
+	}
+}
+#+END_SRC
+** Merge k Sorted Lists
+#+BEGIN_SRC go
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) == 0 {
+		return nil
+	}
+	min := &ListNode{Val: 99999999999}
+	mini := -1
+	for i, l := range lists {
+		if l == nil {
+			continue
+		}
+		if l.Val < min.Val {
+			min = l
+			mini = i
+		}
+	}
+	if mini == -1 {
+		return nil
+	}
+	lists[mini] = lists[mini].Next
+	min.Next = mergeKLists(lists)
+	return min
+}
+#+END_SRC
 * Bear in mind
   - 检查类似 max, isXXX, flag 的变量是否更新
   - 检查特殊输入,如空字符串
