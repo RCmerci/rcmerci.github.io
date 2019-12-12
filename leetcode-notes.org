@@ -895,6 +895,31 @@ func mergeKLists(lists []*ListNode) *ListNode {
 	return min
 }
 #+END_SRC
+** Swap Nodes in Pairs
+#+BEGIN_SRC go
+func swapPairs(head *ListNode) *ListNode {
+	fake := &ListNode{}
+	fake.Next = head
+	x := fake
+	i := 0
+	last := fake
+	for x != nil {
+		if i == 2 {
+			tmp1 := last.Next
+			last.Next = last.Next.Next
+			tmp1.Next = last.Next.Next
+			last.Next.Next = tmp1
+			i = 0
+			last = tmp1
+			x = tmp1
+		} else {
+			i++
+			x = x.Next
+		}
+	}
+	return fake.Next
+}
+#+END_SRC
 * Bear in mind
   - 检查类似 max, isXXX, flag 的变量是否更新
   - 检查特殊输入,如空字符串

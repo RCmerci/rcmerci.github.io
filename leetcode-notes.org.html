@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title>leetcode notes</title>
-<!-- 2019-12-11 三 22:33 -->
+<!-- 2019-12-12 四 22:33 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <meta  name="author" content="root" />
@@ -139,7 +139,7 @@ for the JavaScript code in this tag.
 </head>
 <body>
 <div id="preamble" class="status">
-<p class="date">Updated: 2019-12-11 三 22:33</p>
+<p class="date">Updated: 2019-12-12 四 22:33</p>
 </div>
 <div id="content">
 <h1 class="title">leetcode notes</h1>
@@ -170,6 +170,7 @@ for the JavaScript code in this tag.
 <li><a href="#sec-0-21">0.21. Merge Two Sorted Lists</a></li>
 <li><a href="#sec-0-22">0.22. Generate Parentheses</a></li>
 <li><a href="#sec-0-23">0.23. Merge k Sorted Lists</a></li>
+<li><a href="#sec-0-24">0.24. Swap Nodes in Pairs</a></li>
 </ul>
 </li>
 <li><a href="#sec-1">1. Bear in mind</a></div>
@@ -1156,6 +1157,37 @@ func aux(l, r, n int, curr string, res *[]string) {
 	lists[mini] = lists[mini].Next
 	min.Next = mergeKLists(lists)
 	return min
+}
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-0-24" class="outline-3">
+<h3 id="sec-0-24"><span class="section-number-3">0.24</span> Swap Nodes in Pairs</h3>
+<div class="outline-text-3" id="text-0-24">
+<div class="org-src-container">
+
+<pre class="src src-go">func swapPairs(head *ListNode) *ListNode {
+	fake := &amp;ListNode{}
+	fake.Next = head
+	x := fake
+	i := 0
+	last := fake
+	for x != nil {
+		if i == 2 {
+			tmp1 := last.Next
+			last.Next = last.Next.Next
+			tmp1.Next = last.Next.Next
+			last.Next.Next = tmp1
+			i = 0
+			last = tmp1
+			x = tmp1
+		} else {
+			i++
+			x = x.Next
+		}
+	}
+	return fake.Next
 }
 </pre>
 </div>
