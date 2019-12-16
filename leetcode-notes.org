@@ -920,6 +920,40 @@ func swapPairs(head *ListNode) *ListNode {
 	return fake.Next
 }
 #+END_SRC
+** Reverse Nodes in k-Group
+#+BEGIN_SRC go
+func reverseKGroup(head *ListNode, k int) *ListNode {
+	if head == nil {
+		return nil
+	}
+	if k < 2 {
+		return head
+	}
+	tmp := head
+	for i := 1; i < k; i++ {
+		tmp = tmp.Next
+		if tmp == nil {
+			return head
+		}
+	}
+
+	last := head
+	curr := head.Next
+	next := curr.Next
+	i := 1
+	for i < k {
+		i++
+		curr.Next = last
+		last = curr
+		curr = next
+		if next != nil {
+			next = next.Next
+		}
+	}
+	head.Next = reverseKGroup(curr, k)
+	return last
+}
+#+END_SRC
 * Bear in mind
   - 检查类似 max, isXXX, flag 的变量是否更新
   - 检查特殊输入,如空字符串
