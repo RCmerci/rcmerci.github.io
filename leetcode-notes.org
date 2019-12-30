@@ -954,6 +954,236 @@ func reverseKGroup(head *ListNode, k int) *ListNode {
 	return last
 }
 #+END_SRC
+** Remove Duplicates from Sorted Array
+#+BEGIN_SRC go
+func removeDuplicates(nums []int) int {
+	if len(nums) == 0 {
+		return 0
+	}
+	i, j := 0, 1
+	r := 1
+	for ; j < len(nums); j++ {
+		if nums[j] == nums[i] {
+			continue
+		} else {
+			i++
+			r++
+			nums[i] = nums[j]
+		}
+	}
+	return r
+}
+
+#+END_SRC
+** Remove Element
+#+BEGIN_SRC go
+func removeElement(nums []int, val int) int {
+	i, j, r := 0, 0, 0
+	for ; j < len(nums); j++ {
+		if nums[j] == val {
+			continue
+		} else {
+			nums[i] = nums[j]
+			i++
+			r++
+		}
+	}
+	return r
+}
+#+END_SRC
+** Implement strStr()
+#+BEGIN_SRC go
+func strStr(haystack string, needle string) int {
+	if needle == "" {
+		return 0
+	}
+	next := gen(needle)
+	j := 0
+	for i := 0; i < len(haystack); {
+		if haystack[i] == needle[j] {
+			if j == len(needle)-1 {
+				return i - j
+			}
+			j++
+			i++
+		} else {
+			j = next[j]
+			if j == -1 {
+				j = 0
+				i++
+			}
+		}
+	}
+	return -1
+}
+
+func gen(needle string) []int {
+	r := make([]int, len(needle))
+	r[0] = -1
+	i, j := 0, -1
+	for i < len(needle)-1 {
+		if j == -1 || needle[i] == needle[j] {
+			j++
+			i++
+			r[i] = j
+		} else {
+			j = r[j]
+		}
+	}
+	return r
+}
+
+#+END_SRC
+** Divide Two Integers
+#+BEGIN_SRC go
+func divide(dividend int, divisor int) int {
+	flag := false
+	if dividend < 0 && divisor > 0 {
+		dividend = -dividend
+		flag = true
+	} else if dividend > 0 && divisor < 0 {
+		divisor = -divisor
+		flag = true
+	} else if dividend < 0 && divisor < 0 {
+		dividend = -dividend
+		divisor = -divisor
+	}
+	if dividend < divisor {
+		return 0
+	}
+	r := 0
+	for {
+		l, b := aux(dividend, divisor, 1)
+		r += l
+		dividend -= b
+		if dividend < divisor {
+			if flag {
+				if -r < -2147483648 {
+					return 2147483647
+				}
+				return -r
+			}
+			if r > 2147483647 {
+				return 2147483647
+			}
+			return r
+		}
+
+	}
+	panic("")
+}
+
+func aux(a, b, r int) (int, int) {
+	if a >= b && a <= b+b {
+		return r, b
+	}
+	return aux(a, b+b, r+r)
+}
+
+#+END_SRC
+** Substring with Concatenation of All Words
+#+BEGIN_SRC go
+func findSubstring(s string, words []string) []int {
+	if s == "" || len(words) == 0 {
+		return nil
+	}
+	ss := []byte(s)
+
+	r := []int{}
+	wlen := len(words[0])
+	for i := 0; i < wlen; i++ {
+		m := map[string]int{}
+
+		for _, w := range words {
+			if _, ok := m[w]; !ok {
+				m[w] = 1
+			} else {
+				m[w] += 1
+			}
+		}
+		k := i
+		j := i + wlen*len(words)
+		if j > len(s) {
+			return r
+		}
+		for l := k; l < j; {
+			if _, ok := m[string(ss[l:l+wlen])]; ok {
+				m[string(ss[l:l+wlen])] -= 1
+			}
+			l += wlen
+		}
+		flag := false
+		for _, v := range m {
+			if v != 0 {
+				flag = true
+				break
+			}
+		}
+		if !flag {
+			r = append(r, k)
+		}
+		k += wlen
+		j += wlen
+		for k < j && j <= len(s) {
+			if _, ok := m[string(ss[k-wlen:k])]; ok {
+				m[string(ss[k-wlen:k])] += 1
+			}
+			if _, ok := m[string(ss[j-wlen:j])]; ok {
+				m[string(ss[j-wlen:j])] -= 1
+			}
+
+			flag := false
+			for _, v := range m {
+				if v != 0 {
+					flag = true
+					break
+				}
+			}
+			if !flag {
+				r = append(r, k)
+			}
+			k += wlen
+			j += wlen
+		}
+	}
+	return r
+}
+#+END_SRC
+** Next Permutation
+#+BEGIN_SRC go
+func nextPermutation(nums []int) {
+	if len(nums) == 0 {
+		return
+	}
+	last := nums[len(nums)-1]
+	i := len(nums) - 2
+	for ; i >= 0; i-- {
+		if nums[i] < last {
+			last = nums[i]
+			break
+		}
+		last = nums[i]
+	}
+	if i == -1 {
+		sort.Ints(nums)
+		return
+	}
+	lasti := i
+	neari := i + 1
+	near := nums[i+1]
+	i++
+	for ; i < len(nums); i++ {
+		if nums[i] < near && nums[i] > last {
+			near = nums[i]
+			neari = i
+		}
+	}
+	nums[lasti] = near
+	nums[neari] = last
+	sort.Ints(nums[lasti+1:])
+
+}
+#+END_SRC
 * Bear in mind
   - 检查类似 max, isXXX, flag 的变量是否更新
   - 检查特殊输入,如空字符串
