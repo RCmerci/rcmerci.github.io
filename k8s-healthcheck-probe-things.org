@@ -1,0 +1,124 @@
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
+#+TITLE: Healthcheck Probes Things
+#+KEYWORDS: kubernetes
+#+OPTIONS: toc:nil num:3 H:4 ^:nil pri:t
+#+BEGIN_abstract
+本文描述K8S的健康检查相关的事情.
+#+END_abstract
+#+TOC: headlines 2
+
+** k8s中的 Probe 
+   健康检查的探针分2种
+   - LivenessProbe
+     
+     用于探测容器的存活性(liveness), 如果探测失败就会重启容器.
+   - ReadinessProbe
+
+     用于探测容器的就绪状态(readiness), 如果探测失败就会把容器从endpoint 列表中去掉
+
+   
+*** initialDelaySeconds
+    初次 probe 执行前等待的时长
+      
+**** 如果 livenessProbe 设置了initialDelaySeconds, 那么在初次探测之前是什么状态?
+     见下节的 initialValue 说明
+**** 如果 readinessProbe 设置了initialDelaySeconds, 那么在初次探测之前是什么状态?
+     见下节的 initialValue 说明
+
+*** periodSeconds
+    执行probe的频率, 默认是10s
+    
+**** 如果probe的命令需要运行时长大于periodSeconds, 那么探测是会怎么执行?
+     probe 还有一个timeoutSeconds 参数, 默认 1s.
+     
+     假设显式设置timeoutSeconds=20s, 并且探测的命令耗时 > 10s, 且periodSeconds=10s.
+     那么每次探测结束之后会立马进行下一次探测, 而非再等待 10s, 也不是上一次探测还没结束, 下一次就开始.
+     
+     假设显式设置timeoutSeconds=20s, 并且探测的命令耗时 5s, 且periodSeconds=10s.
+     那么探测的时间点是 0s, 10s, 20s, ..., 而非0s, 15s, 30s, ...
+
+     这里的行为实际上就是time.Newticker导致的. 它会丢弃使用者来不及接受的tick, 详见下面time 库中的注释.
+#+begin_src go
+// NewTicker returns a new Ticker containing a channel that will send the
+// time with a period specified by the duration argument.
+// It adjusts the intervals or drops ticks to make up for slow receivers.
+// The duration d must be greater than zero; if not, NewTicker will panic.
+// Stop the ticker to release associated resources.
+func NewTicker(d Duration) *Ticker {
+	if d <= 0 {
+		panic(errors.New("non-positive interval for NewTicker"))
+	}
+	// Give the channel a 1-element time buffer.
+	// If the client falls behind while reading, we drop ticks
+	// on the floor until the client catches up.
+	c := make(chan Time, 1)
+	t := &Ticker{
+		C: c,
+		r: runtimeTimer{
+			when:   when(d),
+			period: int64(d),
+			f:      sendTime,
+			arg:    c,
+		},
+	}
+	startTimer(&t.r)
+	return t
+}
+#+end_src
+
+     具体相关代码位于 github/kubernetes/pkg/kubelet/prober/worker.go:run()
+
+*** kubelet 
+    readinessprobe 和 livenessprobe 都在 kubelet 中进行.
+
+    整体上, node 上新增 pod 时候, 启动 0-2 个 goroutine 去进行 probe,
+    删除 pod 时候, 把之前的 worker goroutine 退出. 
+    
+    对于 ContainerStatus.Ready 有个疑问:
+    #+begin_src go
+	  func (m *manager) UpdatePodStatus(podUID types.UID, podStatus *v1.PodStatus) {
+	      for i, c := range podStatus.ContainerStatuses {
+		      var ready bool
+		      if c.State.Running == nil {
+			      ready = false
+		      } else if result, ok := m.readinessManager.Get(kubecontainer.ParseContainerID(c.ContainerID)); ok {
+			      ready = result == results.Success
+		      } else {
+			      // The check whether there is a probe which hasn't run yet.
+			      _, exists := m.getWorker(podUID, c.Name, readiness)
+			      ready = !exists
+		      }
+		      podStatus.ContainerStatuses[i].Ready = ready
+	      }
+		  // ...
+      }
+    #+end_src
+    #+begin_notes
+    为何 else 中的还没进行过 probe 就将 ready 设置为 true ?
+    #+end_notes
+
+    进行 probe 的具体实现在
+    github/kubernetes/pkg/kubelet/prober/worker.go:doProbe()
+
+
+    kubelet 会将 probe 的结果同步给 apiserver.
+    
+*** initialValue
+     readinessProbe和 livenessProbe 都有初始值, 也就是说, 在容器启动的
+     initialDelaySeconds 这段时间内, 这个2 种探测的结果都是它们的初始值.
+     分别是
+     - readiness: failure
+     - liveness: success
+       
+     这2 个初始值的原因显而易见. readiness 是 failure则
+     initialDelaySeconds 内不会导入流量到该容器. liveness 如果设置成
+     failure, 那么还在容器启动中就可能会被重起.
+
+*** endpoints controller
+    监听 service 和 pod 的变化(add,update,delete), 对于需要更新(或创建,删除)的情况下, 计算endpoint的内容并更新.
+
+    endpoint 在相应的 service 存在的情况下, 才会生成.
+
+    endpoint 的 subnet 中记录了 ready 和 unready 的pod的地址.
+
+    上面描述的, 在 kublet 中进行一系列的健康检测, 然后在 pod 的状态中更新, 自然就触发了 endpoint controller 的更新动作.

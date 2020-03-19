@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2020-03-19 Thu 17:51 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Healthcheck Probes Things</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="rcmerci" />
+<meta name="keywords" content="kubernetes" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://gongzhitaao.org/orgcss/org.css"/>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="preamble" class="status">
+<p class="author">Author: rcmerci</p>
+<p class="date">Updated: 2020-03-19 Thu 17:51</p>
+</div>
+<div id="content">
+<h1 class="title">Healthcheck Probes Things</h1>
+<div class="abstract">
+<p>
+本文描述K8S的健康检查相关的事情.
+</p>
+
+</div>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org4c05197">1. k8s中的 Probe</a>
+<ul>
+<li><a href="#org1a2cb6e">1.1. initialDelaySeconds</a></li>
+<li><a href="#org747a7c2">1.2. periodSeconds</a></li>
+<li><a href="#orgdc705e1">1.3. kubelet</a></li>
+<li><a href="#orgcccd6d6">1.4. initialValue</a></li>
+<li><a href="#orga9eb047">1.5. endpoints controller</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4c05197" class="outline-2">
+<h2 id="org4c05197"><span class="section-number-2">1</span> k8s中的 Probe</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+健康检查的探针分2种
+</p>
+<ul class="org-ul">
+<li><p>
+LivenessProbe
+</p>
+
+<p>
+用于探测容器的存活性(liveness), 如果探测失败就会重启容器.
+</p></li>
+<li><p>
+ReadinessProbe
+</p>
+
+<p>
+用于探测容器的就绪状态(readiness), 如果探测失败就会把容器从endpoint 列表中去掉
+</p></li>
+</ul>
+</div>
+
+
+<div id="outline-container-org1a2cb6e" class="outline-3">
+<h3 id="org1a2cb6e"><span class="section-number-3">1.1</span> initialDelaySeconds</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+初次 probe 执行前等待的时长
+</p>
+</div>
+
+<div id="outline-container-org2635691" class="outline-4">
+<h4 id="org2635691"><span class="section-number-4">1.1.1</span> 如果 livenessProbe 设置了initialDelaySeconds, 那么在初次探测之前是什么状态?</h4>
+<div class="outline-text-4" id="text-1-1-1">
+<p>
+见下节的 initialValue 说明
+</p>
+</div>
+</div>
+<div id="outline-container-orgcf1e326" class="outline-4">
+<h4 id="orgcf1e326"><span class="section-number-4">1.1.2</span> 如果 readinessProbe 设置了initialDelaySeconds, 那么在初次探测之前是什么状态?</h4>
+<div class="outline-text-4" id="text-1-1-2">
+<p>
+见下节的 initialValue 说明
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org747a7c2" class="outline-3">
+<h3 id="org747a7c2"><span class="section-number-3">1.2</span> periodSeconds</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+执行probe的频率, 默认是10s
+</p>
+</div>
+
+<div id="outline-container-org3ded6f2" class="outline-4">
+<h4 id="org3ded6f2"><span class="section-number-4">1.2.1</span> 如果probe的命令需要运行时长大于periodSeconds, 那么探测是会怎么执行?</h4>
+<div class="outline-text-4" id="text-1-2-1">
+<p>
+probe 还有一个timeoutSeconds 参数, 默认 1s.
+</p>
+
+<p>
+假设显式设置timeoutSeconds=20s, 并且探测的命令耗时 &gt; 10s, 且periodSeconds=10s.
+那么每次探测结束之后会立马进行下一次探测, 而非再等待 10s, 也不是上一次探测还没结束, 下一次就开始.
+</p>
+
+<p>
+假设显式设置timeoutSeconds=20s, 并且探测的命令耗时 5s, 且periodSeconds=10s.
+那么探测的时间点是 0s, 10s, 20s, &#x2026;, 而非0s, 15s, 30s, &#x2026;
+</p>
+
+<p>
+这里的行为实际上就是time.Newticker导致的. 它会丢弃使用者来不及接受的tick, 详见下面time 库中的注释.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #40883f;">// </span><span style="color: #40883f;">NewTicker returns a new Ticker containing a channel that will send the</span>
+<span style="color: #40883f;">// </span><span style="color: #40883f;">time with a period specified by the duration argument.</span>
+<span style="color: #40883f;">// </span><span style="color: #40883f;">It adjusts the intervals or drops ticks to make up for slow receivers.</span>
+<span style="color: #40883f;">// </span><span style="color: #40883f;">The duration d must be greater than zero; if not, NewTicker will panic.</span>
+<span style="color: #40883f;">// </span><span style="color: #40883f;">Stop the ticker to release associated resources.</span>
+<span style="color: #989848;">func</span> <span style="color: #424242; font-weight: bold;">NewTicker</span>(d <span style="color: #0287c8; font-weight: bold;">Duration</span>) *<span style="color: #0287c8; font-weight: bold;">Ticker</span> {
+        <span style="color: #989848;">if</span> d &lt;= 0 {
+                <span style="color: #424242; font-weight: bold;">panic</span>(errors.<span style="color: #424242; font-weight: bold;">New</span>(<span style="color: #b85c57;">"non-positive interval for NewTicker"</span>))
+        }
+        <span style="color: #40883f;">// </span><span style="color: #40883f;">Give the channel a 1-element time buffer.</span>
+        <span style="color: #40883f;">// </span><span style="color: #40883f;">If the client falls behind while reading, we drop ticks</span>
+        <span style="color: #40883f;">// </span><span style="color: #40883f;">on the floor until the client catches up.</span>
+        c := <span style="color: #424242; font-weight: bold;">make</span>(<span style="color: #989848;">chan</span> <span style="color: #0287c8; font-weight: bold;">Time</span>, 1)
+        t := &amp;<span style="color: #0287c8; font-weight: bold;">Ticker</span>{
+                <span style="color: #989848; font-weight: bold;">C</span>: c,
+                <span style="color: #989848; font-weight: bold;">r</span>: <span style="color: #0287c8; font-weight: bold;">runtimeTimer</span>{
+                        <span style="color: #989848; font-weight: bold;">when</span>:   <span style="color: #424242; font-weight: bold;">when</span>(d),
+                        <span style="color: #989848; font-weight: bold;">period</span>: <span style="color: #424242; font-weight: bold;">int64</span>(d),
+                        <span style="color: #989848; font-weight: bold;">f</span>:      sendTime,
+                        <span style="color: #989848; font-weight: bold;">arg</span>:    c,
+                },
+        }
+        <span style="color: #424242; font-weight: bold;">startTimer</span>(&amp;t.r)
+        <span style="color: #989848;">return</span> t
+}
+</pre>
+</div>
+
+<p>
+具体相关代码位于 github/kubernetes/pkg/kubelet/prober/worker.go:run()
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgdc705e1" class="outline-3">
+<h3 id="orgdc705e1"><span class="section-number-3">1.3</span> kubelet</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+readinessprobe 和 livenessprobe 都在 kubelet 中进行.
+</p>
+
+<p>
+整体上, node 上新增 pod 时候, 启动 0-2 个 goroutine 去进行 probe,
+删除 pod 时候, 把之前的 worker goroutine 退出.
+</p>
+
+<p>
+对于 ContainerStatus.Ready 有个疑问:
+</p>
+<div class="org-src-container">
+<pre class="src src-go">    <span style="color: #989848;">func</span> (m *<span style="color: #0287c8; font-weight: bold;">manager</span>) <span style="color: #424242; font-weight: bold;">UpdatePodStatus</span>(podUID <span style="color: #0287c8; font-weight: bold;">types.UID</span>, podStatus *<span style="color: #0287c8; font-weight: bold;">v1.PodStatus</span>) {
+        <span style="color: #989848;">for</span> i, c := <span style="color: #989848;">range</span> podStatus.ContainerStatuses {
+                <span style="color: #989848;">var</span> ready bool
+                <span style="color: #989848;">if</span> c.State.Running == <span style="color: #989848; font-weight: bold;">nil</span> {
+                        ready = <span style="color: #989848; font-weight: bold;">false</span>
+                } <span style="color: #989848;">else</span> <span style="color: #989848;">if</span> result, ok := m.readinessManager.<span style="color: #424242; font-weight: bold;">Get</span>(kubecontainer.<span style="color: #424242; font-weight: bold;">ParseContainerID</span>(c.ContainerID)); ok {
+                        ready = result == results.Success
+                } <span style="color: #989848;">else</span> {
+                        <span style="color: #40883f;">// </span><span style="color: #40883f;">The check whether there is a probe which hasn't run yet.</span>
+                        _, exists := m.<span style="color: #424242; font-weight: bold;">getWorker</span>(podUID, c.Name, readiness)
+                        ready = !exists
+                }
+                podStatus.ContainerStatuses[i].Ready = ready
+        }
+            <span style="color: #40883f;">// </span><span style="color: #40883f;">...</span>
+}
+</pre>
+</div>
+<div class="notes">
+<p>
+为何 else 中的还没进行过 probe 就将 ready 设置为 true ?
+</p>
+
+</div>
+
+<p>
+进行 probe 的具体实现在
+github/kubernetes/pkg/kubelet/prober/worker.go:doProbe()
+</p>
+
+
+<p>
+kubelet 会将 probe 的结果同步给 apiserver.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgcccd6d6" class="outline-3">
+<h3 id="orgcccd6d6"><span class="section-number-3">1.4</span> initialValue</h3>
+<div class="outline-text-3" id="text-1-4">
+<p>
+readinessProbe和 livenessProbe 都有初始值, 也就是说, 在容器启动的
+initialDelaySeconds 这段时间内, 这个2 种探测的结果都是它们的初始值.
+分别是
+</p>
+<ul class="org-ul">
+<li>readiness: failure</li>
+<li>liveness: success</li>
+</ul>
+
+<p>
+这2 个初始值的原因显而易见. readiness 是 failure则
+initialDelaySeconds 内不会导入流量到该容器. liveness 如果设置成
+failure, 那么还在容器启动中就可能会被重起.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orga9eb047" class="outline-3">
+<h3 id="orga9eb047"><span class="section-number-3">1.5</span> endpoints controller</h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+监听 service 和 pod 的变化(add,update,delete), 对于需要更新(或创建,删除)的情况下, 计算endpoint的内容并更新.
+</p>
+
+<p>
+endpoint 在相应的 service 存在的情况下, 才会生成.
+</p>
+
+<p>
+endpoint 的 subnet 中记录了 ready 和 unready 的pod的地址.
+</p>
+
+<p>
+上面描述的, 在 kublet 中进行一系列的健康检测, 然后在 pod 的状态中更新, 自然就触发了 endpoint controller 的更新动作.
+</p>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>
