@@ -5,5 +5,5 @@
 - [[https://rcmerci.github.io/How-to-read-the-syntax-tree-of-golang.org.html][How to read the syntax tree of golang]]
 - [[https://rcmerci.github.io/compiling_with_continuations_notes.org.html][Compiling with continuations Notes(1)]]
 - [[https://rcmerci.github.io/leetcode-notes.org.html][Leetcode Notes]]
-- [[https://rcmerci.github.io/k8s-healthcheck-probe-things.org.htmlleetcode-notes.org.html][k8s healthcheck]]
+- [[https://rcmerci.github.io/k8s-healthcheck-probe-things.org.html][k8s healthcheck]]
 
