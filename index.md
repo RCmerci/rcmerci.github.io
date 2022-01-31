@@ -19,5 +19,5 @@
           [:div.font-bold.block.group-hover:text-indigo-600 title]]])
       [{:title "2021 => 2022"
 	    :preview "https://raw.githubusercontent.com/RCmerci/rcmerci.github.io/yablog/docs/resources/361638002629_.pic_hd.jpg"
-        :path "docs/notebooks/2022-1-31.html"}])))
+        :path "notebooks/2022-1-31.html"}])))
 ```
