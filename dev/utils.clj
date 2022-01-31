@@ -1,5 +1,6 @@
 (ns utils
-  (:require [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [nextjournal.clerk :as clerk])
   (:import [java.net URL]
            [java.nio.file Paths Files]
            [javax.imageio ImageIO]))
@@ -10,4 +11,4 @@
       (ImageIO/read in))))
 
 (defn load-image-url! [url]
-  (ImageIO/read (URL. url)))
+  (clerk/html [:img {:src url}]))
